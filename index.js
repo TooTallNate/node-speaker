@@ -5,7 +5,7 @@
 
 var inherits = require('util').inherits;
 var Writable = require('stream').Writable;
-var debug = require('debug')('audio-output');
+var debug = require('debug')('speaker');
 var binding = require('bindings')('binding');
 
 // node v0.8.x compat
@@ -15,7 +15,7 @@ if (!Writable) Writable = require('readable-stream/writable');
  * Module exports.
  */
 
-exports = module.exports = Output;
+exports = module.exports = Speaker;
 
 /**
  * Export information about the `mpg123_module_t` being used.
@@ -26,15 +26,15 @@ exports.description = binding.description;
 exports.module_name = binding.name;
 
 /**
- * The `Output` class accepts raw PCM data written to it, and then sends that data
+ * The `Speaker` class accepts raw PCM data written to it, and then sends that data
  * to the default output device of the OS.
  *
  * @param {Object} options object
  * @api public
  */
 
-function Output (opts) {
-  if (!(this instanceof Output)) return new Output(opts);
+function Speaker (opts) {
+  if (!(this instanceof Speaker)) return new Speaker(opts);
   Writable.call(this, opts);
 
   // set default options
@@ -61,7 +61,7 @@ function Output (opts) {
   // calculate the "block align"
   this.blockAlign = this.bitDepth / 8 * this.channels;
 }
-inherits(Output, Writable);
+inherits(Speaker, Writable);
 
 /**
  * `_write()` callback for the Writable base class.
@@ -69,7 +69,7 @@ inherits(Output, Writable);
  * TODO: figure out how to flush() and close()...
  */
 
-Output.prototype._write = function (chunk, done) {
+Speaker.prototype._write = function (chunk, done) {
   debug('_write() (%d bytes)', chunk.length);
   var b;
   var left = chunk;
