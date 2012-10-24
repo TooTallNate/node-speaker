@@ -1,5 +1,5 @@
 {
-  "name": "audio-output",
+  "name": "speaker",
   "description": "Output raw PCM audio data to the speakers",
   "keywords": [
     "pcm",
@@ -19,6 +19,6 @@
   "dependencies": {
     "bindings": "*",
     "debug": "*",
-    "readable-stream": "0.0.3"
+    "readable-stream": "~0.0.3"
   }
 }
