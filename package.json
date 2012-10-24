@@ -1,0 +1,24 @@
+{
+  "name": "audio-output",
+  "description": "Output raw PCM audio data to the speakers",
+  "keywords": [
+    "pcm",
+    "audio",
+    "music",
+    "output",
+    "speaker",
+    "headphone"
+  ],
+  "version": "0.0.0",
+  "author": "Nathan Rajlich <nathan@tootallnate.net> (http://tootallnate.net)",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/TooTallNate/node-audio-output.git"
+  },
+  "main": "./index.js",
+  "dependencies": {
+    "bindings": "*",
+    "debug": "*",
+    "readable-stream": "0.0.3"
+  }
+}
