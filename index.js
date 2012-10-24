@@ -36,15 +36,29 @@ function Output (opts) {
   if (!(this instanceof Output)) return new Output(opts);
   Writable.call(this, opts);
 
-  // TODO: open async?
-  this.audio_handle = new Buffer(binding.sizeof_audio_output_t);
-
+  // set default options
   if (!opts) opts = {};
   if (null == opts.signed) opts.signed = true;
   if (null == opts.channels) opts.channels = 2;
   if (null == opts.bitDepth) opts.bitDepth = 16;
   if (null == opts.sampleRate) opts.sampleRate = 44100;
+
+  // initialize the audio handle
+  // TODO: open async?
+  this.audio_handle = new Buffer(binding.sizeof_audio_output_t);
   binding.open(this.audio_handle, opts);
+
+  // chunks are sent over to the backend in "samplesPerFrame * blockAlign" size.
+  // this is necessary because if we send too big of chunks at once, then there
+  // won't be any data ready when the audio callback comes (experienced with the
+  // CoreAudio backend)
+  if (null == opts.samplesPerFrame) opts.samplesPerFrame = 1024;
+
+  // copy over the opts
+  for (var i in opts) this[i] = opts[i];
+
+  // calculate the "block align"
+  this.blockAlign = this.bitDepth / 8 * this.channels;
 }
 inherits(Output, Writable);
 
@@ -56,12 +70,33 @@ inherits(Output, Writable);
 
 Output.prototype._write = function (chunk, done) {
   debug('_write() (%d bytes)', chunk.length);
-  binding.write(this.audio_handle, chunk, chunk.length, function (r) {
+  var b;
+  var left = chunk;
+  var handle = this.audio_handle;
+  var chunkSize = this.blockAlign * this.samplesPerFrame;
+
+  function write () {
+    b = left;
+    if (b.length > chunkSize) {
+      var t = b;
+      b = t.slice(0, chunkSize);
+      left = t.slice(chunkSize);
+    } else {
+      left = null;
+    }
+    debug('writing %d byte chunk', b.length);
+    binding.write(handle, b, b.length, afterWrite);
+  }
+  function afterWrite (r) {
     debug('wrote %d bytes', r);
-    if (r != chunk.length) {
+    if (r != b.length) {
       done(new Error('write() failed: ' + r));
+    } else if (left) {
+      write();
     } else {
       done();
     }
-  });
+  }
+
+  write();
 };
