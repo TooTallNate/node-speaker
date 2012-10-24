@@ -29,20 +29,39 @@ Handle<Value> Open (const Arguments& args) {
   audio_output_t *ao = reinterpret_cast<audio_output_t *>(UnwrapPointer(args[0]));
   memset(ao, 0, sizeof(audio_output_t));
 
-  /* TODO: configurable */
-  ao->channels = 2; /* channels */
-  ao->rate = 44100; /* rample rate */
-  ao->format = MPG123_ENC_SIGNED_16; /* bit depth, is signed?, int/float */
+  Local<Object> format = args[1]->ToObject();
+
+  ao->channels = format->Get(String::NewSymbol("channels"))->Int32Value(); /* channels */
+  ao->rate = format->Get(String::NewSymbol("sampleRate"))->Int32Value(); /* sample rate */
+  int f = 0;
+  int bitDepth = format->Get(String::NewSymbol("bitDepth"))->Int32Value();
+  bool isSigned = format->Get(String::NewSymbol("signed"))->BooleanValue();
+  if (bitDepth == 8 && isSigned) {
+    f = MPG123_ENC_SIGNED_8;
+  } else if (bitDepth == 8 && !isSigned) {
+    f = MPG123_ENC_UNSIGNED_8;
+  } else if (bitDepth == 16 && isSigned) {
+    f = MPG123_ENC_SIGNED_16;
+  } else if (bitDepth == 16 && !isSigned) {
+    f = MPG123_ENC_UNSIGNED_16;
+  } else if (bitDepth == 24 && isSigned) {
+    f = MPG123_ENC_SIGNED_24;
+  } else if (bitDepth == 24 && !isSigned) {
+    f = MPG123_ENC_UNSIGNED_24;
+  } else if (bitDepth == 32 && isSigned) {
+    f = MPG123_ENC_SIGNED_32;
+  } else if (bitDepth == 32 && !isSigned) {
+    f = MPG123_ENC_UNSIGNED_32;
+  }
+  /* TODO: support float, ulaw, etc. */
+  ao->format = f; /* bit depth, is signed?, int/float */
 
   /* init_output() */
   r = mpg123_output_module_info.init_output(ao);
-  if (r) {
-    fprintf(stderr, "init_output() failed: %d\n", r);
-    return scope.Close(Integer::New(r));
+  if (r == 0) {
+    /* open() */
+    r = ao->open(ao);
   }
-
-  /* open() */
-  r = ao->open(ao);
 
   return scope.Close(Integer::New(r));
 }
