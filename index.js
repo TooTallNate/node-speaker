@@ -38,6 +38,12 @@ function Output (opts) {
 
   // TODO: open async?
   this.audio_handle = new Buffer(binding.sizeof_audio_output_t);
+
+  if (!opts) opts = {};
+  if (null == opts.signed) opts.signed = true;
+  if (null == opts.channels) opts.channels = 2;
+  if (null == opts.bitDepth) opts.bitDepth = 16;
+  if (null == opts.sampleRate) opts.sampleRate = 44100;
   binding.open(this.audio_handle, opts);
 }
 inherits(Output, Writable);
