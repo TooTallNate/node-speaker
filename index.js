@@ -39,10 +39,10 @@ function Speaker (opts) {
 
   // set default options
   if (!opts) opts = {};
-  if (null == opts.signed) opts.signed = true;
   if (null == opts.channels) opts.channels = 2;
   if (null == opts.bitDepth) opts.bitDepth = 16;
   if (null == opts.sampleRate) opts.sampleRate = 44100;
+  if (null == opts.signed) opts.signed = opts.bitDepth != 8;
 
   // initialize the audio handle
   // TODO: open async?
