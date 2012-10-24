@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include "v8.h"
 #include "node.h"
-#include "node_buffer.h"
 #include "node_pointer.h"
 #include "mpg123app.h"
 
@@ -17,7 +16,7 @@ namespace {
 struct write_req {
   uv_work_t req;
   audio_output_t *ao;
-  unsigned char* buffer;
+  unsigned char *buffer;
   int len;
   int written;
   Persistent<Function> callback;
