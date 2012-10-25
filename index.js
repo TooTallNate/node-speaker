@@ -72,8 +72,6 @@ inherits(Speaker, Writable);
 
 /**
  * `_write()` callback for the Writable base class.
- *
- * TODO: figure out how to flush() and close()...
  */
 
 Speaker.prototype._write = function (chunk, done) {
