@@ -63,5 +63,5 @@ To manually override the default backend, pass the `--output-module` switch to
 `npm`/`node-gyp`:
 
 ``` bash
-$ npm install speaker --output-module=openal
+$ npm install speaker --mpg123-backend=openal
 ```
