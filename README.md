@@ -24,7 +24,7 @@ Here's an example of piping `stdin` to the speaker, which should be 2 channel,
 16-bit audio at 44,100 samples per second (a.k.a CD quality audio).
 
 ``` javascript
-var Speaker = require('speaker')
+var Speaker = require('speaker');
 
 // Create the Speaker instance
 var speaker = new Speaker({
