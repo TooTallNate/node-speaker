@@ -9,7 +9,11 @@
 {
   'variables': {
     'target_arch%': 'ia32',
-    'output_module%': 'coreaudio'
+    'conditions': [
+      ['OS=="mac"', { 'output_module%': 'coreaudio' }],
+      ['OS=="win"', { 'output_module%': 'win32' }],
+      ['OS=="linux"', { 'output_module%': 'alsa' }],
+    ]
   },
   'target_defaults': {
     'default_configuration': 'Debug',
@@ -50,12 +54,7 @@
             },
           }]
         ],
-        'variables': {
-          'output_module%': 'coreaudio'
-        },
       }],
-      ['OS=="win"', { 'variables': { 'output_module%': 'win32' } }],
-      ['OS=="linux"', { 'variables': { 'output_module%': 'alsa' } }],
     ]
   },
 
