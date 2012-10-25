@@ -3,10 +3,10 @@
  * Module dependencies.
  */
 
-var inherits = require('util').inherits;
-var Writable = require('stream').Writable;
 var debug = require('debug')('speaker');
 var binding = require('bindings')('binding');
+var inherits = require('util').inherits;
+var Writable = require('stream').Writable;
 
 // node v0.8.x compat
 if (!Writable) Writable = require('readable-stream/writable');
