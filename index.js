@@ -55,8 +55,12 @@ function Speaker (opts) {
   // CoreAudio backend)
   if (null == opts.samplesPerFrame) opts.samplesPerFrame = 1024;
 
-  // copy over the opts
-  for (var i in opts) this[i] = opts[i];
+  // copy over options
+  this.signed = opts.signed;
+  this.channels = opts.channels;
+  this.bitDepth = opts.bitDepth;
+  this.sampleRate = opts.sampleRate;
+  this.samplesPerFrame = opts.samplesPerFrame;
 
   // calculate the "block align"
   this.blockAlign = this.bitDepth / 8 * this.channels;
