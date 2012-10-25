@@ -64,6 +64,9 @@ function Speaker (opts) {
 
   // calculate the "block align"
   this.blockAlign = this.bitDepth / 8 * this.channels;
+
+  // call `flush()` upon the "finish" event
+  this.on('finish', this._flush);
 }
 inherits(Speaker, Writable);
 
@@ -104,4 +107,16 @@ Speaker.prototype._write = function (chunk, done) {
   }
 
   write();
+};
+
+/**
+ * Calls the `flush()` and `close()` bindings for the audio backend.
+ */
+
+Speaker.prototype._flush = function () {
+  debug('_flush()');
+  var handle = this.audio_handle;
+  // TODO: async
+  binding.flush(handle);
+  binding.close(handle);
 };
