@@ -44,3 +44,24 @@ API
 ### Speaker class
 
 TODO: document...
+
+
+Audio Backend Selection
+-----------------------
+
+`node-speaker` is backed by `mpg123`'s "output modules", which in turn use one of
+many popular audio backends like ALSA, OSS, SDL, and lots more. The default
+backends for each operating system are described in the table below:
+
+| **Operating System** | **Audio Backend** | **Description**
+|:---------------------|:------------------|:----------------------------------
+| Linux                | `alsa`            | Uses the linux ALSA audio backend
+| Mac OS X             | `coreaudio`       | Uses native CoreAudio API
+| Windows              | `win32`           | Uses the native Windows sound API
+
+To manually override the default backend, pass the `--output-module` switch to
+`npm`/`node-gyp`:
+
+``` bash
+$ npm install speaker --output-module=openal
+```
