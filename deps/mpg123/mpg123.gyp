@@ -150,16 +150,22 @@
       },
       'include_dirs': [
         'src',
+        'src/output',
         'src/libmpg123',
         # platform and arch-specific headers
         'config/<(OS)/<(target_arch)',
       ],
       'defines': [
+        'PIC',
+        'NOXFERMEM',
+        'REAL_IS_FLOAT',
+        'HAVE_CONFIG_H',
         'BUILDING_OUTPUT_MODULES=1'
       ],
       'direct_dependent_settings': {
         'include_dirs': [
           'src',
+          'src/output',
           'src/libmpg123',
           # platform and arch-specific headers
           'config/<(OS)/<(target_arch)',
@@ -190,6 +196,16 @@
             'libraries': [
               '-framework OpenAL',
             ]
+          }
+        }],
+        ['mpg123_backend=="win32"', {
+          'libraries': [
+            '-lwinmm.lib',
+          ],
+          'direct_dependent_settings': {
+            'libraries': [
+              '-lwinmm.lib',
+            ],
           }
         }],
       ],
