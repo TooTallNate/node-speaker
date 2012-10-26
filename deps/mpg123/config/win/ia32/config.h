@@ -22,7 +22,8 @@
 /* #define DEBUG
 #define EXTRA_DEBUG */
 
-#define REAL_IS_FLOAT
+/* defined in "gyp"
+#define REAL_IS_FLOAT */
 
 #define inline __inline
 

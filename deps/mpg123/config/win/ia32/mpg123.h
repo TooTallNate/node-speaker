@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 
-typedef long ssize_t;
+typedef intptr_t ssize_t;
 
 // Needed for Visual Studio versions before VS 2010.
 #if (_MSC_VER < 1600)
