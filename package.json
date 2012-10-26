@@ -7,13 +7,21 @@
     "music",
     "output",
     "speaker",
-    "headphone"
+    "headphone",
+    "alsa",
+    "coreaudio",
+    "openal",
+    "sdl",
+    "portaudio",
+    "jack",
+    "oss",
+    "pulse"
   ],
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "Nathan Rajlich <nathan@tootallnate.net> (http://tootallnate.net)",
   "repository": {
     "type": "git",
-    "url": "git://github.com/TooTallNate/node-audio-output.git"
+    "url": "git://github.com/TooTallNate/node-speaker.git"
   },
   "main": "./index.js",
   "dependencies": {
