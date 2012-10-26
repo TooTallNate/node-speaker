@@ -55,9 +55,10 @@ backends for each operating system are described in the table below:
 
 | **Operating System** | **Audio Backend** | **Description**
 |:---------------------|:------------------|:----------------------------------
-| Linux                | `alsa`            | Uses the linux ALSA audio backend
-| Mac OS X             | `coreaudio`       | Uses native CoreAudio API
-| Windows              | `win32`           | Uses the native Windows sound API
+| Linux                | `alsa`            | Output audio using Advanced Linux Sound Architecture (ALSA).
+| Mac OS X             | `coreaudio`       | Output audio using Mac OS X's CoreAudio.
+| Windows              | `win32`           | Audio output for Windows (winmm).
+| Solaris              | `sun`             | Audio output for Sun Audio.
 
 To manually override the default backend, pass the `--output-module` switch to
 `npm`/`node-gyp`:
