@@ -145,6 +145,7 @@
           ['OS=="mac"', { 'mpg123_backend%': 'coreaudio' }],
           ['OS=="win"', { 'mpg123_backend%': 'win32' }],
           ['OS=="linux"', { 'mpg123_backend%': 'alsa' }],
+          ['OS=="solaris"', { 'mpg123_backend%': 'sun' }],
         ]
       },
       'include_dirs': [
