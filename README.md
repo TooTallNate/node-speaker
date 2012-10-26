@@ -60,7 +60,7 @@ backends for each operating system are described in the table below:
 | Windows              | `win32`           | Audio output for Windows (winmm).
 | Solaris              | `sun`             | Audio output for Sun Audio.
 
-To manually override the default backend, pass the `--output-module` switch to
+To manually override the default backend, pass the `--mpg123-backend` switch to
 `npm`/`node-gyp`:
 
 ``` bash
