@@ -140,8 +140,7 @@
       'type': 'static_library',
       'variables': {
         'conditions': [
-          # "mpg123_backend" is the audio backend to use when compiling
-          # the "output module"
+          # "mpg123_backend" is the audio backend to use
           ['OS=="mac"', { 'mpg123_backend%': 'coreaudio' }],
           ['OS=="win"', { 'mpg123_backend%': 'win32' }],
           ['OS=="linux"', { 'mpg123_backend%': 'alsa' }],
@@ -173,14 +172,14 @@
       },
       'conditions': [
         ['mpg123_backend=="alsa"', {
-          'direct_dependent_settings': {
+          'link_settings': {
             'libraries': [
               '-lasound',
             ]
           }
         }],
         ['mpg123_backend=="coreaudio"', {
-          'direct_dependent_settings': {
+          'link_settings': {
             'libraries': [
               '-framework AudioToolbox',
               '-framework AudioUnit',
@@ -192,17 +191,14 @@
           'defines': [
             'OPENAL_SUBDIR_OPENAL'
           ],
-          'direct_dependent_settings': {
+          'link_settings': {
             'libraries': [
               '-framework OpenAL',
             ]
           }
         }],
         ['mpg123_backend=="win32"', {
-          'libraries': [
-            '-lwinmm.lib',
-          ],
-          'direct_dependent_settings': {
+          'link_settings': {
             'libraries': [
               '-lwinmm.lib',
             ],
