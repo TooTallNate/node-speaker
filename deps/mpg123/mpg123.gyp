@@ -85,8 +85,6 @@
         'src/libmpg123/layer1.c',
         'src/libmpg123/layer2.c',
         'src/libmpg123/layer3.c',
-        'src/libmpg123/synth_s32.c',
-        'src/libmpg123/synth_real.c',
         'src/libmpg123/feature.c',
       ],
       'include_dirs': [
@@ -124,6 +122,8 @@
             'NEWOLD_WRITE_SAMPLE',
           ],
           'sources': [
+            'src/libmpg123/synth_s32.c',
+            'src/libmpg123/synth_real.c',
             'src/libmpg123/dct64_i386.c',
           ],
         }],
@@ -135,6 +135,8 @@
           'sources': [
             'src/libmpg123/dct64_x86_64.S',
             'src/libmpg123/dct64_x86_64_float.S',
+            'src/libmpg123/synth_s32.c',
+            'src/libmpg123/synth_real.c',
             'src/libmpg123/synth_stereo_x86_64.S',
             'src/libmpg123/synth_stereo_x86_64_float.S',
             'src/libmpg123/synth_stereo_x86_64_s32.S',
