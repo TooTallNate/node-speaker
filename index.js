@@ -121,7 +121,7 @@ Speaker.prototype._write = function (chunk, done) {
 Speaker.prototype._flush = function () {
   debug('_flush()');
 
-  // TODO: async
+  // TODO: async definitely
   binding.flush(this.audio_handle);
 
   // XXX: The audio backends keep ~.5 seconds worth of buffered audio data
@@ -141,7 +141,7 @@ Speaker.prototype._flush = function () {
  */
 
 Speaker.prototype.close = function () {
-  debug('_close()');
+  debug('close()');
 
   // TODO: async maybe?
   binding.close(this.audio_handle);
