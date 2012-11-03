@@ -191,6 +191,8 @@ Speaker.prototype._flush = function () {
   // TODO: async definitely
   binding.flush(this.audio_handle);
 
+  this.emit('flush');
+
   // XXX: The audio backends keep ~.5 seconds worth of buffered audio data
   // in their system, so presumably there will be .5 seconds *more* of audio data
   // coming out the speakers, so we must keep the event loop alive so the process
