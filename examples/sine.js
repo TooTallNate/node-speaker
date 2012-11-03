@@ -26,16 +26,8 @@ sine.sampleRate = 44100;
 sine.samplesGenerated = 0;
 sine._read = read;
 
-// specify the audio format we want to use
-// TODO: remove when the "pipe" event is properly handled
-var format = {
-  bitDepth: sine.bitDepth,
-  channels: sine.channels,
-  sampleRate: sine.sampleRate
-};
-
 // create a SineWaveGenerator instance and pipe it to the speaker
-sine.pipe(new Speaker(format));
+sine.pipe(new Speaker());
 
 // the Readable "_read()" callback function
 function read (n, fn) {
