@@ -37,41 +37,93 @@ function Speaker (opts) {
   if (!(this instanceof Speaker)) return new Speaker(opts);
   Writable.call(this, opts);
 
-  // set default options
-  if (!opts) opts = {};
-  if (null == opts.channels) opts.channels = 2;
-  if (null == opts.bitDepth) opts.bitDepth = 16;
-  if (null == opts.sampleRate) opts.sampleRate = 44100;
-  if (null == opts.signed) opts.signed = opts.bitDepth != 8;
-
-  // initialize the audio handle
-  // TODO: open async?
-  this.audio_handle = new Buffer(binding.sizeof_audio_output_t);
-  binding.open(this.audio_handle, opts);
+  // set options if provided
+  if (opts) this._opts(opts);
 
   // chunks are sent over to the backend in "samplesPerFrame * blockAlign" size.
   // this is necessary because if we send too big of chunks at once, then there
   // won't be any data ready when the audio callback comes (experienced with the
   // CoreAudio backend)
-  if (null == opts.samplesPerFrame) opts.samplesPerFrame = 1024;
-
-  // copy over options (not really used, but useful for logging)
-  this.signed = opts.signed;
-  this.channels = opts.channels;
-  this.bitDepth = opts.bitDepth;
-  this.sampleRate = opts.sampleRate;
-  this.samplesPerFrame = opts.samplesPerFrame;
-
-  // calculate the "block align"
-  this.blockAlign = this.bitDepth / 8 * this.channels;
+  this.samplesPerFrame = 1024;
 
   // flipped after close() is called, no write() calls allowed after
   this._closed = false;
 
   // call `flush()` upon the "finish" event
   this.on('finish', this._flush);
+  this.on('pipe', this._pipe);
 }
 inherits(Speaker, Writable);
+
+/**
+ * Calls the audio backend's `open()` function, and then emits an "open" event.
+ */
+
+Speaker.prototype._open = function () {
+  debug('open()');
+  if (this.audio_handle) {
+    throw new Error('_open() called more than once!');
+  }
+  // set default options, if not set
+  if (null == this.channels) {
+    debug('setting default "channels"', 2);
+    this.channels = 2;
+  }
+  if (null == this.bitDepth) {
+    debug('setting default "bitDepth"', 16);
+    this.bitDepth = 16;
+  }
+  if (null == this.sampleRate) {
+    debug('setting default "sampleRate"', 44100);
+    this.sampleRate = 44100;
+  }
+  if (null == this.signed) {
+    debug('setting default "signed"', this.bitDepth != 8);
+    this.signed = this.bitDepth != 8;
+  }
+
+  // calculate the "block align"
+  this.blockAlign = this.bitDepth / 8 * this.channels;
+
+  // initialize the audio handle
+  // TODO: open async?
+  this.audio_handle = new Buffer(binding.sizeof_audio_output_t);
+  var r = binding.open(this.audio_handle, this);
+  if (0 !== r) {
+    throw new Error('open() failed: ' + r);
+  }
+
+  this.emit('open');
+  return this.audio_handle;
+};
+
+/**
+ * set given options
+ */
+
+Speaker.prototype._opts = function (opts) {
+  debug('opts(%j)', opts);
+  if (null != opts.channels) {
+    debug('setting "channels"', opts.channels);
+    this.channels = opts.channels;
+  }
+  if (null != opts.bitDepth) {
+    debug('setting "bitDepth"', opts.bitDepth);
+    this.bitDepth = opts.bitDepth;
+  }
+  if (null != opts.sampleRate) {
+    debug('setting "sampleRate"', opts.sampleRate);
+    this.sampleRate = opts.sampleRate;
+  }
+  if (null != opts.signed) {
+    debug('setting "signed"', opts.signed);
+    this.signed = opts.signed;
+  }
+  if (null != opts.samplesPerFrame) {
+    debug('setting "samplesPerFrame"', opts.samplesPerFrame);
+    this.samplesPerFrame = opts.samplesPerFrame;
+  }
+};
 
 /**
  * `_write()` callback for the Writable base class.
@@ -86,6 +138,10 @@ Speaker.prototype._write = function (chunk, done) {
   var b;
   var left = chunk;
   var handle = this.audio_handle;
+  if (!handle) {
+    // this is the first time write() is being called; need to _open()
+    handle = this._open();
+  }
   var chunkSize = this.blockAlign * this.samplesPerFrame;
 
   function write () {
@@ -115,7 +171,18 @@ Speaker.prototype._write = function (chunk, done) {
 };
 
 /**
- * Calls the `flush()` and `close()` bindings for the audio backend.
+ * Called when this stream is pipe()d to from another readable stream.
+ * If the "sampleRate", "channels", "bitDepth", and "signed" properties are,
+ * set, then they will be used over the currently set values.
+ */
+
+Speaker.prototype._pipe = function (source) {
+  debug('_pipe()');
+  this._opts(source);
+};
+
+/**
+ * Calls the `flush()` bindings for the audio backend.
  */
 
 Speaker.prototype._flush = function () {
