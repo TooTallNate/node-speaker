@@ -41,9 +41,35 @@ process.stdin.pipe(speaker);
 API
 ---
 
-### Speaker class
+`require('speaker')` directly returns the `Speaker` constructor. It is the only
+interface exported by node-speaker.
 
-TODO: document...
+### new Speaker([ format ]) -> Speaker instance;
+
+Creates a new `Speaker` instance, which is a writable stream that you can pipe raw
+PCM audio data to. The optional `format` object may contain any of the `Writable`
+base class options, as well as any of these PCM formatting options:
+
+  * `channels` - The number of audio channels. PCM data must be interleaved. Defaults to `2`.
+  * `bitDepth` - The number of bits per sample. Defaults to `16` (16-bit).
+  * `sampleRate` - The number of samples per second per channel. Defaults to `44100`.
+  * `signed` - Boolean specifying if the samples are signed or unsigned. Defaults to `true` when bit depth is 8-bit, `false` otherwise.
+  * `samplesPerFrame` The number of samples to send to the audio backend at a time. You likely don't need to mess with this value. Defaults to `1024`.
+
+#### "open" event
+
+Fired when the backend `open()` call has completed. This happens once the first
+`write()` call happens on the speaker instance.
+
+#### "flush" event
+
+Fired after the speaker instance has had `end()` called, and after the audio data
+has been flushed to the speakers.
+
+#### "close" event
+
+Fired after the "flush" event, after the backend `close()` call has completed.
+This speaker instance is essentially finished after this point.
 
 
 Audio Backend Selection
