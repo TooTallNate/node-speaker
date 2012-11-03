@@ -65,6 +65,9 @@ function Speaker (opts) {
   // calculate the "block align"
   this.blockAlign = this.bitDepth / 8 * this.channels;
 
+  // flipped after close() is called, no write() calls allowed after
+  this._closed = false;
+
   // call `flush()` upon the "finish" event
   this.on('finish', this._flush);
 }
@@ -76,6 +79,10 @@ inherits(Speaker, Writable);
 
 Speaker.prototype._write = function (chunk, done) {
   debug('_write() (%d bytes)', chunk.length);
+  if (this._closed) {
+    // close() has already been called. this should not be called
+    return done(new Error('write() call after close() call'));
+  }
   var b;
   var left = chunk;
   var handle = this.audio_handle;
@@ -126,16 +133,20 @@ Speaker.prototype._flush = function () {
 };
 
 /**
- * Called after the flush() binding has been called and the audio backend has
- * finished playing the audio buffer from the speakers.
+ * Closes the audio backend. Normally this function will be called automatically
+ * after the audio backend has finished playing the audio buffer through the
+ * speakers.
+ *
+ * @api public
  */
 
-Speaker.prototype._afterFlush = function () {
-  debug('_afterFlush()');
+Speaker.prototype.close = function () {
+  debug('_close()');
 
   // TODO: async maybe?
   binding.close(this.audio_handle);
 
-  this.emit('flush');
+  this.emit('close');
   this.audio_handle = null;
+  this._closed = true;
 };
