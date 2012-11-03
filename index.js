@@ -55,7 +55,7 @@ function Speaker (opts) {
   // CoreAudio backend)
   if (null == opts.samplesPerFrame) opts.samplesPerFrame = 1024;
 
-  // copy over options
+  // copy over options (not really used, but useful for logging)
   this.signed = opts.signed;
   this.channels = opts.channels;
   this.bitDepth = opts.bitDepth;
@@ -113,8 +113,29 @@ Speaker.prototype._write = function (chunk, done) {
 
 Speaker.prototype._flush = function () {
   debug('_flush()');
-  var handle = this.audio_handle;
+
   // TODO: async
-  binding.flush(handle);
-  binding.close(handle);
+  binding.flush(this.audio_handle);
+
+  // XXX: The audio backends keep ~.5 seconds worth of buffered audio data
+  // in their system, so presumably there will be .5 seconds *more* of audio data
+  // coming out the speakers, so we must keep the event loop alive so the process
+  // doesn't exit. This is a nasty, nasty hack and hopefully there's a better way
+  // to be notified when the audio has acutally finished playing.
+  setTimeout(this._afterFlush.bind(this), 600);
+};
+
+/**
+ * Called after the flush() binding has been called and the audio backend has
+ * finished playing the audio buffer from the speakers.
+ */
+
+Speaker.prototype._afterFlush = function () {
+  debug('_afterFlush()');
+
+  // TODO: async maybe?
+  binding.close(this.audio_handle);
+
+  this.emit('flush');
+  this.audio_handle = null;
 };
