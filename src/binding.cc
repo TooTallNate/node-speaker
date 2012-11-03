@@ -126,7 +126,9 @@ Handle<Value> Close (const Arguments& args) {
   audio_output_t *ao = reinterpret_cast<audio_output_t *>(UnwrapPointer(args[0]));
   ao->close(ao);
   int r = 0;
-  r = ao->deinit(ao);
+  if (ao->deinit) {
+    r = ao->deinit(ao);
+  }
   return scope.Close(Integer::New(r));
 }
 
