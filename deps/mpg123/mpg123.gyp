@@ -112,7 +112,7 @@
             'NEWOLD_WRITE_SAMPLE',
           ],
           'sources': [
-            'src/libmpg123/synth_arm.c',
+            'src/libmpg123/synth_arm.S',
           ],
         }],
         ['mpg123_cpu=="i386_fpu"', {
