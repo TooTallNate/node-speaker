@@ -1,3 +1,14 @@
+0.0.3 / 2012-11-03
+==================
+
+ - a two examples to the "examples" dir
+ - emit an "open" event
+ - emit a "close" event
+ - emit a "flush" event
+ - properly support the "pipe" event
+ - mpg123: fix a CoreAudio backend compilation warning
+ - add a timeout after the flush call to ensure the backend has time to play
+
 0.0.2 / 2012-10-25
 ==================
 
