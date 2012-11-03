@@ -129,7 +129,7 @@ Speaker.prototype._flush = function () {
   // coming out the speakers, so we must keep the event loop alive so the process
   // doesn't exit. This is a nasty, nasty hack and hopefully there's a better way
   // to be notified when the audio has acutally finished playing.
-  setTimeout(this._afterFlush.bind(this), 600);
+  setTimeout(this.close.bind(this), 600);
 };
 
 /**
