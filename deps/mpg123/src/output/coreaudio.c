@@ -76,7 +76,7 @@ static OSStatus playProc(AudioConverterRef inAudioConverter,
 		dest = ca->buffer;
 		
 		/* Only play if we have data left */
-		if ( sfifo_used( &ca->fifo ) < wanted ) {
+		if ( sfifo_used( &ca->fifo ) < (int)wanted ) {
 			if(!ca->decode_done) {
 				warning("Didn't have any audio data in callback (buffer underflow)");
 				return -1;
