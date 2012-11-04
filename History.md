@@ -1,3 +1,9 @@
+0.0.4 / 2012-11-04
+==================
+
+ - mpg123: add linux arm support
+ - guard against bindings that don't have a `deinit()` function
+
 0.0.3 / 2012-11-03
 ==================
 
