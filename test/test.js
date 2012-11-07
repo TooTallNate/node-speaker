@@ -71,4 +71,18 @@ describe('Speaker', function () {
     s.end(Buffer(0));
   });
 
+  it('should only emit one "close" event', function (done) {
+    var s = new Speaker();
+    var count = 0;
+    s.on('close', function () {
+      count++;
+    });
+    assert.equal(0, count);
+    s.close();
+    assert.equal(1, count);
+    s.close();
+    assert.equal(1, count);
+    done();
+  });
+
 });

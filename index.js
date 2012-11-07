@@ -211,11 +211,14 @@ Speaker.prototype._flush = function () {
 
 Speaker.prototype.close = function () {
   debug('close()');
+  if (this._closed) return;
 
-  // TODO: async maybe?
-  binding.close(this.audio_handle);
+  if (this.audio_handle) {
+    // TODO: async maybe?
+    binding.close(this.audio_handle);
+    this.audio_handle = null;
+  }
 
   this.emit('close');
-  this.audio_handle = null;
   this._closed = true;
 };
