@@ -24,9 +24,15 @@
     "url": "git://github.com/TooTallNate/node-speaker.git"
   },
   "main": "./index.js",
+  "scripts": {
+    "test": "mocha --reporter spec"
+  },
   "dependencies": {
     "bindings": "*",
     "debug": "*",
     "readable-stream": "~0.0.3"
+  },
+  "devDependencies": {
+    "mocha": "*"
   }
 }
