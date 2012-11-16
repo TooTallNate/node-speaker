@@ -35,7 +35,12 @@ Handle<Value> Open (const Arguments& args) {
   int f = 0;
   int bitDepth = format->Get(String::NewSymbol("bitDepth"))->Int32Value();
   bool isSigned = format->Get(String::NewSymbol("signed"))->BooleanValue();
-  if (bitDepth == 8 && isSigned) {
+  bool isFloat = format->Get(String::NewSymbol("float"))->BooleanValue();
+  if (bitDepth == 32 && isFloat && isSigned) {
+    f = MPG123_ENC_FLOAT_32;
+  } else if (bitDepth == 64 && isFloat && isSigned) {
+    f = MPG123_ENC_FLOAT_64;
+  } else if (bitDepth == 8 && isSigned) {
     f = MPG123_ENC_SIGNED_8;
   } else if (bitDepth == 8 && !isSigned) {
     f = MPG123_ENC_UNSIGNED_8;
@@ -51,8 +56,10 @@ Handle<Value> Open (const Arguments& args) {
     f = MPG123_ENC_SIGNED_32;
   } else if (bitDepth == 32 && !isSigned) {
     f = MPG123_ENC_UNSIGNED_32;
+  } else {
+    /* TODO: unsupported format, throw error */
   }
-  /* TODO: support float, ulaw, etc. */
+  /* TODO: support ulaw and alaw? */
   ao->format = f; /* bit depth, is signed?, int/float */
 
   /* init_output() */

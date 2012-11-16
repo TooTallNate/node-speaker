@@ -115,6 +115,10 @@ Speaker.prototype._opts = function (opts) {
     debug('setting "sampleRate"', opts.sampleRate);
     this.sampleRate = opts.sampleRate;
   }
+  if (null != opts.float) {
+    debug('setting "float"', opts.float);
+    this.float = opts.float;
+  }
   if (null != opts.signed) {
     debug('setting "signed"', opts.signed);
     this.signed = opts.signed;
