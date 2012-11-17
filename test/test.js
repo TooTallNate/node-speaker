@@ -61,6 +61,7 @@ describe('Speaker', function () {
   });
 
   it('should emit a "close" event after end()', function (done) {
+    this.slow(1000);
     var s = new Speaker();
     var called = false;
     s.on('close', function () {
