@@ -25,7 +25,7 @@
   },
   "main": "./index.js",
   "scripts": {
-    "test": "mocha --reporter spec"
+    "test": "node-gyp rebuild --mpg123-backend=dummy && mocha --reporter spec"
   },
   "dependencies": {
     "bindings": "*",
