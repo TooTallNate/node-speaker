@@ -1,11 +1,13 @@
 node-speaker
 ============
-### Output raw PCM audio data to the speakers
+### Output [PCM audio][pcm] data to the speakers
 
 
-A Writable stream instance that accepts raw PCM audio data and outputs it to the
-speakers. The output is backed by `mpg123`'s audio output modules, which in turn
-use any number of audio backends commonly found on Operating Systems these days.
+A Writable stream instance that accepts [PCM audio][pcm] data and outputs it
+to the speakers. The output is backed by `mpg123`'s audio output modules, which
+in turn use any number of audio backends commonly found on Operating Systems
+these days.
+
 
 Installation
 ------------
@@ -33,7 +35,7 @@ var speaker = new Speaker({
   sampleRate: 44100     // 44,100 Hz sample rate
 });
 
-// Raw PCM data from stdin gets piped into the speaker
+// PCM data from stdin gets piped into the speaker
 process.stdin.pipe(speaker);
 ```
 
@@ -46,7 +48,7 @@ interface exported by node-speaker.
 
 ### new Speaker([ format ]) -> Speaker instance;
 
-Creates a new `Speaker` instance, which is a writable stream that you can pipe raw
+Creates a new `Speaker` instance, which is a writable stream that you can pipe
 PCM audio data to. The optional `format` object may contain any of the `Writable`
 base class options, as well as any of these PCM formatting options:
 
@@ -92,3 +94,5 @@ To manually override the default backend, pass the `--mpg123-backend` switch to
 ``` bash
 $ npm install speaker --mpg123-backend=openal
 ```
+
+[pcm]: http://en.wikipedia.org/wiki/Pulse-code_modulation

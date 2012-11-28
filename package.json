@@ -1,6 +1,6 @@
 {
   "name": "speaker",
-  "description": "Output raw PCM audio data to the speakers",
+  "description": "Output PCM audio data to the speakers",
   "keywords": [
     "pcm",
     "audio",
