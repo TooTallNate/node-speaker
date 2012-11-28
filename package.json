@@ -15,7 +15,8 @@
     "portaudio",
     "jack",
     "oss",
-    "pulse"
+    "pulse",
+    "mpg123"
   ],
   "version": "0.0.5",
   "author": "Nathan Rajlich <nathan@tootallnate.net> (http://tootallnate.net)",
