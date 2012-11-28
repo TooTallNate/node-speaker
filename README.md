@@ -44,7 +44,7 @@ API
 ---
 
 `require('speaker')` directly returns the `Speaker` constructor. It is the only
-interface exported by node-speaker.
+interface exported by `node-speaker`.
 
 ### new Speaker([ format ]) -> Speaker instance;
 
