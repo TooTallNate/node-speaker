@@ -18,6 +18,13 @@ Simply compile and install `node-speaker` using `npm`:
 $ npm install speaker
 ```
 
+On Debian/Ubuntu, the ALSA backend is selected by default, so be sure to have the
+`alsa.h` header file in place:
+
+``` bash
+$ sudo apt-get install libasound2-dev
+```
+
 
 Example
 -------
