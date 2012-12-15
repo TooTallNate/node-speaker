@@ -91,7 +91,7 @@ Handle<Value> Write (const Arguments& args) {
 
   req->req.data = req;
 
-  uv_queue_work(uv_default_loop(), &req->req, write_async, write_after);
+  uv_queue_work(uv_default_loop(), &req->req, write_async, (uv_after_work_cb)write_after);
 
   return Undefined();
 }
