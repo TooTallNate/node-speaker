@@ -1,9 +1,14 @@
+0.0.6 / 2012-12-15
+==================
+
+ - add node >= v0.9.4 compat
+
 0.0.5 / 2012-11-16
 ==================
 
-  - add initial tests (uses the "dummy" output module)
-  - add "float" (32-bit and 64-bit) output support
-  - ensure only one "close" event
+ - add initial tests (uses the "dummy" output module)
+ - add "float" (32-bit and 64-bit) output support
+ - ensure only one "close" event
 
 0.0.4 / 2012-11-04
 ==================
