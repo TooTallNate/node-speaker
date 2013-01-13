@@ -165,8 +165,10 @@ Speaker.prototype._write = function (chunk, done) {
     if (r != b.length) {
       done(new Error('write() failed: ' + r));
     } else if (left) {
+      debug('still %d bytes left in this chunk', left.length);
       write();
     } else {
+      debug('done with this chunk');
       done();
     }
   }
