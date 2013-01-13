@@ -31,7 +31,7 @@
   "dependencies": {
     "bindings": "*",
     "debug": "*",
-    "readable-stream": "~0.0.3"
+    "readable-stream": "*"
   },
   "devDependencies": {
     "mocha": "*"
