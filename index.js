@@ -37,8 +37,8 @@ function Speaker (opts) {
   if (!(this instanceof Speaker)) return new Speaker(opts);
   Writable.call(this, opts);
 
-  // set options if provided
-  if (opts) this._opts(opts);
+  // set PCM format
+  this._format(opts);
 
   // chunks are sent over to the backend in "samplesPerFrame * blockAlign" size.
   // this is necessary because if we send too big of chunks at once, then there
@@ -101,7 +101,7 @@ Speaker.prototype._open = function () {
  * set given options
  */
 
-Speaker.prototype._opts = function (opts) {
+Speaker.prototype._format = function (opts) {
   debug('opts(%j)', opts);
   if (null != opts.channels) {
     debug('setting "channels"', opts.channels);
@@ -184,7 +184,7 @@ Speaker.prototype._write = function (chunk, done) {
 
 Speaker.prototype._pipe = function (source) {
   debug('_pipe()');
-  this._opts(source);
+  this._format(source);
 };
 
 /**
