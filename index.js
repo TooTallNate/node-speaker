@@ -35,6 +35,12 @@ exports.module_name = binding.name;
 
 function Speaker (opts) {
   if (!(this instanceof Speaker)) return new Speaker(opts);
+
+  // default lwm and hwm to 0
+  if (!opts) opts = {};
+  if (null == opts.lowWaterMark) opts.lowWaterMark = 0;
+  if (null == opts.highWaterMark) opts.highWaterMark = 0;
+
   Writable.call(this, opts);
 
   // set PCM format
