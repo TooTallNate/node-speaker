@@ -190,6 +190,7 @@ Speaker.prototype._write = function (chunk, done) {
 Speaker.prototype._pipe = function (source) {
   debug('_pipe()');
   this._format(source);
+  source.once('format', this._format.bind(this));
 };
 
 /**
