@@ -43,9 +43,6 @@ function Speaker (opts) {
 
   Writable.call(this, opts);
 
-  // set PCM format
-  this._format(opts);
-
   // chunks are sent over to the backend in "samplesPerFrame * blockAlign" size.
   // this is necessary because if we send too big of chunks at once, then there
   // won't be any data ready when the audio callback comes (experienced with the
@@ -55,7 +52,9 @@ function Speaker (opts) {
   // flipped after close() is called, no write() calls allowed after
   this._closed = false;
 
-  // call `flush()` upon the "finish" event
+  // set PCM format
+  this._format(opts);
+
   this.on('finish', this._flush);
   this.on('pipe', this._pipe);
 }
