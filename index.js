@@ -29,7 +29,7 @@ exports.module_name = binding.name;
  * The `Speaker` class accepts raw PCM data written to it, and then sends that data
  * to the default output device of the OS.
  *
- * @param {Object} options object
+ * @param {Object} opts options object
  * @api public
  */
 
@@ -62,6 +62,8 @@ inherits(Speaker, Writable);
 
 /**
  * Calls the audio backend's `open()` function, and then emits an "open" event.
+ *
+ * @api private
  */
 
 Speaker.prototype._open = function () {
@@ -103,11 +105,14 @@ Speaker.prototype._open = function () {
 };
 
 /**
- * set given options
+ * Set given PCM formatting options.
+ *
+ * @param {Object} opts
+ * @api private
  */
 
 Speaker.prototype._format = function (opts) {
-  debug('opts(%j)', opts);
+  debug('format(keys = %j)', Object.keys(opts));
   if (null != opts.channels) {
     debug('setting "channels"', opts.channels);
     this.channels = opts.channels;
@@ -136,6 +141,10 @@ Speaker.prototype._format = function (opts) {
 
 /**
  * `_write()` callback for the Writable base class.
+ *
+ * @param {Buffer} chunk
+ * @param {Function} done
+ * @api private
  */
 
 Speaker.prototype._write = function (chunk, done) {
@@ -185,6 +194,8 @@ Speaker.prototype._write = function (chunk, done) {
  * Called when this stream is pipe()d to from another readable stream.
  * If the "sampleRate", "channels", "bitDepth", and "signed" properties are,
  * set, then they will be used over the currently set values.
+ *
+ * @api private
  */
 
 Speaker.prototype._pipe = function (source) {
@@ -195,6 +206,8 @@ Speaker.prototype._pipe = function (source) {
 
 /**
  * Calls the `flush()` bindings for the audio backend.
+ *
+ * @api private
  */
 
 Speaker.prototype._flush = function () {
