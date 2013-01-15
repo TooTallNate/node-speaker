@@ -1,3 +1,12 @@
+0.0.7 / 2013-01-14
+==================
+
+ - wait for the `format` event on pipe'd Readable instances
+ - default the lowWaterMark and highWaterMark to 0
+ - rename _opts() to _format()
+ - package: allow any "readable-stream" version
+ - add a few more debug calls
+
 0.0.6 / 2012-12-15
 ==================
 
