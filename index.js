@@ -3,10 +3,16 @@
  * Module dependencies.
  */
 
+var os = require('os');
 var debug = require('debug')('speaker');
 var binding = require('bindings')('binding');
 var inherits = require('util').inherits;
 var Writable = require('stream').Writable;
+
+// determine the native host endianness, the only supported playback endianness
+var endianness = 'function' == os.endianness ?
+                 os.endianness() :
+                 'LE'; // assume little-endian for older versions of node.js
 
 // node v0.8.x compat
 if (!Writable) Writable = require('readable-stream/writable');
@@ -136,6 +142,13 @@ Speaker.prototype._format = function (opts) {
   if (null != opts.samplesPerFrame) {
     debug('setting "samplesPerFrame"', opts.samplesPerFrame);
     this.samplesPerFrame = opts.samplesPerFrame;
+  }
+  if (null == opts.endianness || endianness == opts.endianness) {
+    // no "endianness" specified or explicit native endianness
+    this.endianness = endianness;
+  } else {
+    // only native endianness is supported...
+    this.emit('error', new Error('only native endianness ("' + endianness + '") is supported, got "' + opts.endianness + '"'));
   }
 };
 

@@ -1,6 +1,13 @@
 
+/**
+ * Module dependencies.
+ */
+
+var os = require('os');
 var assert = require('assert');
 var Speaker = require('../');
+var endianness = 'function' == os.endianness ? os.endianness() : 'LE';
+var opposite = endianness == 'LE' ? 'BE' : 'LE';
 
 describe('exports', function () {
 
@@ -84,6 +91,18 @@ describe('Speaker', function () {
     s.close();
     assert.equal(1, count);
     done();
+  });
+
+  it('should not throw an Error if native endianness is specified', function () {
+    assert.doesNotThrow(function () {
+      new Speaker({ endianness: endianness });
+    });
+  });
+
+  it('should throw an Error if non-native endianness is specified', function () {
+    assert.throws(function () {
+      new Speaker({ endianness: opposite });
+    });
   });
 
 });
