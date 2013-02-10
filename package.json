@@ -18,7 +18,7 @@
     "pulse",
     "mpg123"
   ],
-  "version": "0.0.7",
+  "version": "0.0.8",
   "author": "Nathan Rajlich <nathan@tootallnate.net> (http://tootallnate.net)",
   "repository": {
     "type": "git",

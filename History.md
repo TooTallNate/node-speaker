@@ -1,3 +1,8 @@
+0.0.8 / 2013-02-10
+==================
+
+ - throw an Error if non-native endianness is specified
+
 0.0.7 / 2013-01-14
 ==================
 
