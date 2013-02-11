@@ -1,6 +1,7 @@
 node-speaker
 ============
 ### Output [PCM audio][pcm] data to the speakers
+[![Build Status](https://secure.travis-ci.org/TooTallNate/node-speaker.png)](http://travis-ci.org/TooTallNate/node-speaker)
 
 
 A Writable stream instance that accepts [PCM audio][pcm] data and outputs it
