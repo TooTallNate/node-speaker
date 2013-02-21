@@ -111,7 +111,9 @@ Speaker.prototype._open = function () {
 };
 
 /**
- * Set given PCM formatting options.
+ * Set given PCM formatting options. Called during instantiation on the passed in
+ * options object, on the stream given to the "pipe" event, and a final time if
+ * that stream emits a "format" event.
  *
  * @param {Object} opts
  * @api private
@@ -205,7 +207,7 @@ Speaker.prototype._write = function (chunk, done) {
 
 /**
  * Called when this stream is pipe()d to from another readable stream.
- * If the "sampleRate", "channels", "bitDepth", and "signed" properties are,
+ * If the "sampleRate", "channels", "bitDepth", and "signed" properties are
  * set, then they will be used over the currently set values.
  *
  * @api private
