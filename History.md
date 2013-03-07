@@ -1,3 +1,9 @@
+0.0.9 / 2013-03-06
+==================
+
+ - update for v0.9.12 Writable stream API change
+ - a couple more jsdoc comments
+
 0.0.8 / 2013-02-10
 ==================
 
