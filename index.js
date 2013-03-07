@@ -158,12 +158,17 @@ Speaker.prototype._format = function (opts) {
  * `_write()` callback for the Writable base class.
  *
  * @param {Buffer} chunk
+ * @param {String} encoding ignore (grrrr.....)
  * @param {Function} done
  * @api private
  */
 
-Speaker.prototype._write = function (chunk, done) {
+Speaker.prototype._write = function (chunk, encoding, done) {
+  // streams2 are really starting to suck :\
+  if (typeof encoding == 'function') done = encoding;
+
   debug('_write() (%d bytes)', chunk.length);
+
   if (this._closed) {
     // close() has already been called. this should not be called
     return done(new Error('write() call after close() call'));
