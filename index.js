@@ -178,7 +178,11 @@ Speaker.prototype._write = function (chunk, encoding, done) {
   var handle = this.audio_handle;
   if (!handle) {
     // this is the first time write() is being called; need to _open()
-    handle = this._open();
+    try {
+      handle = this._open();
+    } catch (e) {
+      return done(e);
+    }
   }
   var chunkSize = this.blockAlign * this.samplesPerFrame;
 
