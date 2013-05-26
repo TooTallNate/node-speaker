@@ -246,11 +246,11 @@ Speaker.prototype._flush = function () {
     // to be notified when the audio has acutally finished playing.
     setTimeout(function() {
         // TODO: async definitely
-        binding.flush(this.audio_handle);
+        binding.flush(self.audio_handle);
 
         self.emit('flush');
 
-        self.close.bind(self);
+        self.close();
     },600);
 };
 
