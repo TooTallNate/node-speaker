@@ -30,7 +30,7 @@ sine._read = read;
 sine.pipe(new Speaker());
 
 // the Readable "_read()" callback function
-function read (n, fn) {
+function read (n) {
   var sampleSize = this.bitDepth / 8;
   var blockAlign = sampleSize * this.channels;
   var numSamples = n / blockAlign | 0;
@@ -51,7 +51,7 @@ function read (n, fn) {
     }
   }
 
-  fn(null, buf);
+  this.push(buf);
 
   this.samplesGenerated += numSamples;
   if (this.samplesGenerated >= this.sampleRate * duration) {
