@@ -1,7 +1,7 @@
 0.0.10 / 2013-05-08
 ===================
 
- - pass the "open" error the the Speaker instance. Closes #11.
+ - pass the "open" error to the Speaker instance. Closes #7.
  - package: add "sound" as a keyword
  - travis: test node v0.10
 
