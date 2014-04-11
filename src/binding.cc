@@ -1,9 +1,11 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+
 #include "v8.h"
 #include "node.h"
 #include "node_pointer.h"
+#include "nan.h"
 #include "output.h"
 
 using namespace v8;
@@ -22,20 +24,20 @@ struct write_req {
   Persistent<Function> callback;
 };
 
-Handle<Value> Open (const Arguments& args) {
-  HandleScope scope;
+NAN_METHOD(Open) {
+  NanScope();
   int r;
   audio_output_t *ao = reinterpret_cast<audio_output_t *>(UnwrapPointer(args[0]));
   memset(ao, 0, sizeof(audio_output_t));
 
   Local<Object> format = args[1]->ToObject();
 
-  ao->channels = format->Get(String::NewSymbol("channels"))->Int32Value(); /* channels */
-  ao->rate = format->Get(String::NewSymbol("sampleRate"))->Int32Value(); /* sample rate */
+  ao->channels = format->Get(NanSymbol("channels"))->Int32Value(); /* channels */
+  ao->rate = format->Get(NanSymbol("sampleRate"))->Int32Value(); /* sample rate */
   int f = 0;
-  int bitDepth = format->Get(String::NewSymbol("bitDepth"))->Int32Value();
-  bool isSigned = format->Get(String::NewSymbol("signed"))->BooleanValue();
-  bool isFloat = format->Get(String::NewSymbol("float"))->BooleanValue();
+  int bitDepth = format->Get(NanSymbol("bitDepth"))->Int32Value();
+  bool isSigned = format->Get(NanSymbol("signed"))->BooleanValue();
+  bool isFloat = format->Get(NanSymbol("float"))->BooleanValue();
   if (bitDepth == 32 && isFloat && isSigned) {
     f = MPG123_ENC_FLOAT_32;
   } else if (bitDepth == 64 && isFloat && isSigned) {
@@ -69,14 +71,14 @@ Handle<Value> Open (const Arguments& args) {
     r = ao->open(ao);
   }
 
-  return scope.Close(Integer::New(r));
+  NanReturnValue(Integer::New(r));
 }
 
 void write_async (uv_work_t *);
 void write_after (uv_work_t *);
 
-Handle<Value> Write (const Arguments& args) {
-  HandleScope scope;
+NAN_METHOD(Write) {
+  NanScope();
   audio_output_t *ao = reinterpret_cast<audio_output_t *>(UnwrapPointer(args[0]));
   unsigned char *buffer = reinterpret_cast<unsigned char *>(UnwrapPointer(args[1]));
   int len = args[2]->Int32Value();
@@ -87,13 +89,13 @@ Handle<Value> Write (const Arguments& args) {
   req->buffer = buffer;
   req->len = len;
   req->written = 0;
-  req->callback = Persistent<Function>::New(callback);
+  NanAssignPersistent(Function, req->callback, callback);
 
   req->req.data = req;
 
   uv_queue_work(uv_default_loop(), &req->req, write_async, (uv_after_work_cb)write_after);
 
-  return Undefined();
+  NanReturnUndefined();
 }
 
 void write_async (uv_work_t *req) {
@@ -102,14 +104,15 @@ void write_async (uv_work_t *req) {
 }
 
 void write_after (uv_work_t *req) {
-  HandleScope scope;
+  NanScope();
   write_req *wreq = reinterpret_cast<write_req *>(req->data);
 
   Handle<Value> argv[1] = { Integer::New(wreq->written) };
 
   TryCatch try_catch;
 
-  wreq->callback->Call(Context::GetCurrent()->Global(), 1, argv);
+  Local<Function> callback = NanPersistentToLocal(wreq->callback);
+  callback->Call(Context::GetCurrent()->Global(), 1, argv);
 
   // cleanup
   wreq->callback.Dispose();
@@ -120,33 +123,33 @@ void write_after (uv_work_t *req) {
   }
 }
 
-Handle<Value> Flush (const Arguments& args) {
-  HandleScope scope;
+NAN_METHOD(Flush) {
+  NanScope();
   audio_output_t *ao = reinterpret_cast<audio_output_t *>(UnwrapPointer(args[0]));
   /* TODO: async */
   ao->flush(ao);
-  return Undefined();
+  NanReturnUndefined();
 }
 
-Handle<Value> Close (const Arguments& args) {
-  HandleScope scope;
+NAN_METHOD(Close) {
+  NanScope();
   audio_output_t *ao = reinterpret_cast<audio_output_t *>(UnwrapPointer(args[0]));
   ao->close(ao);
   int r = 0;
   if (ao->deinit) {
     r = ao->deinit(ao);
   }
-  return scope.Close(Integer::New(r));
+  NanReturnValue(Integer::New(r));
 }
 
 void Initialize(Handle<Object> target) {
-  HandleScope scope;
-  target->Set(String::NewSymbol("api_version"), Integer::New(mpg123_output_module_info.api_version));
-  target->Set(String::NewSymbol("name"), String::New(mpg123_output_module_info.name));
-  target->Set(String::NewSymbol("description"), String::New(mpg123_output_module_info.description));
-  target->Set(String::NewSymbol("revision"), String::New(mpg123_output_module_info.revision));
+  NanScope();
+  target->Set(NanSymbol("api_version"), Integer::New(mpg123_output_module_info.api_version));
+  target->Set(NanSymbol("name"), String::New(mpg123_output_module_info.name));
+  target->Set(NanSymbol("description"), String::New(mpg123_output_module_info.description));
+  target->Set(NanSymbol("revision"), String::New(mpg123_output_module_info.revision));
 
-  target->Set(String::NewSymbol("sizeof_audio_output_t"), Integer::New(sizeof(audio_output_t)));
+  target->Set(NanSymbol("sizeof_audio_output_t"), Integer::New(sizeof(audio_output_t)));
 
   NODE_SET_METHOD(target, "open", Open);
   NODE_SET_METHOD(target, "write", Write);

@@ -32,6 +32,7 @@
   "dependencies": {
     "bindings": "*",
     "debug": "*",
+    "nan": "~0.8.0",
     "readable-stream": "*"
   },
   "devDependencies": {
