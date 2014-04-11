@@ -56,6 +56,6 @@ function read (n) {
   this.samplesGenerated += numSamples;
   if (this.samplesGenerated >= this.sampleRate * duration) {
     // after generating "duration" second of audio, emit "end"
-    process.nextTick(this.emit.bind(this, 'end'));
+    this.push(null);
   }
 }
