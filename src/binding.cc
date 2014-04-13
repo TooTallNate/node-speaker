@@ -59,7 +59,7 @@ NAN_METHOD(Open) {
   } else if (bitDepth == 32 && !isSigned) {
     f = MPG123_ENC_UNSIGNED_32;
   } else {
-    /* TODO: unsupported format, throw error */
+    return NanThrowTypeError("unsupported format");
   }
   /* TODO: support ulaw and alaw? */
   ao->format = f; /* bit depth, is signed?, int/float */
