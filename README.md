@@ -19,8 +19,8 @@ Simply compile and install `node-speaker` using `npm`:
 $ npm install speaker
 ```
 
-On Debian/Ubuntu, the ALSA backend is selected by default, so be sure to have the
-`alsa.h` header file in place:
+On Debian/Ubuntu, the [ALSA][alsa] backend is selected by default, so be sure
+to have the `alsa.h` header file in place:
 
 ``` bash
 $ sudo apt-get install libasound2-dev
@@ -91,7 +91,7 @@ backends for each operating system are described in the table below:
 
 | **Operating System** | **Audio Backend** | **Description**
 |:---------------------|:------------------|:----------------------------------
-| Linux                | `alsa`            | Output audio using Advanced Linux Sound Architecture (ALSA).
+| Linux                | `alsa`            | Output audio using [Advanced Linux Sound Architecture (ALSA)][alsa].
 | Mac OS X             | `coreaudio`       | Output audio using Mac OS X's CoreAudio.
 | Windows              | `win32`           | Audio output for Windows (winmm).
 | Solaris              | `sun`             | Audio output for Sun Audio.
@@ -104,3 +104,4 @@ $ npm install speaker --mpg123-backend=openal
 ```
 
 [pcm]: http://en.wikipedia.org/wiki/Pulse-code_modulation
+[alsa]: http://www.alsa-project.org/
