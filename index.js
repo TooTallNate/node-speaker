@@ -196,9 +196,10 @@ Speaker.prototype._write = function (chunk, encoding, done) {
       left = null;
     }
     debug('writing %d byte chunk', b.length);
-    binding.write(handle, b, b.length, afterWrite);
+    binding.write(handle, b, b.length, onwrite);
   }
-  function afterWrite (r) {
+
+  function onwrite (r) {
     debug('wrote %d bytes', r);
     if (r != b.length) {
       done(new Error('write() failed: ' + r));
