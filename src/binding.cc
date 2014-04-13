@@ -28,7 +28,7 @@ struct write_req {
 NAN_METHOD(Open) {
   NanScope();
   int r;
-  audio_output_t *ao = reinterpret_cast<audio_output_t *>(UnwrapPointer(args[0]));
+  audio_output_t *ao = UnwrapPointer<audio_output_t *>(args[0]);
   memset(ao, 0, sizeof(audio_output_t));
 
   Local<Object> format = args[1]->ToObject();
@@ -80,8 +80,8 @@ void write_after (uv_work_t *);
 
 NAN_METHOD(Write) {
   NanScope();
-  audio_output_t *ao = reinterpret_cast<audio_output_t *>(UnwrapPointer(args[0]));
-  unsigned char *buffer = reinterpret_cast<unsigned char *>(UnwrapPointer(args[1]));
+  audio_output_t *ao = UnwrapPointer<audio_output_t *>(args[0]);
+  unsigned char *buffer = UnwrapPointer<unsigned char *>(args[1]);
   int len = args[2]->Int32Value();
   Local<Function> callback = Local<Function>::Cast(args[3]);
 
@@ -126,7 +126,7 @@ void write_after (uv_work_t *req) {
 
 NAN_METHOD(Flush) {
   NanScope();
-  audio_output_t *ao = reinterpret_cast<audio_output_t *>(UnwrapPointer(args[0]));
+  audio_output_t *ao = UnwrapPointer<audio_output_t *>(args[0]);
   /* TODO: async */
   ao->flush(ao);
   NanReturnUndefined();
@@ -134,7 +134,7 @@ NAN_METHOD(Flush) {
 
 NAN_METHOD(Close) {
   NanScope();
-  audio_output_t *ao = reinterpret_cast<audio_output_t *>(UnwrapPointer(args[0]));
+  audio_output_t *ao = UnwrapPointer<audio_output_t *>(args[0]);
   ao->close(ao);
   int r = 0;
   if (ao->deinit) {
