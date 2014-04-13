@@ -36,15 +36,10 @@ inline static v8::Handle<v8::Value> WrapPointer(void *ptr) {
  * Unwraps Buffer instance "buffer" to a C `char *` with the offset specified.
  */
 
-inline static char * UnwrapPointer(v8::Handle<v8::Value> buffer, int64_t offset) {
-  return node::Buffer::Data(buffer.As<v8::Object>()) + offset;
-}
-
-/*
- * Unwraps Buffer instance "buffer" to a C `char *` (no offset applied).
- */
-
-
-inline static char * UnwrapPointer(v8::Handle<v8::Value> buffer) {
-  return node::Buffer::Data(buffer.As<v8::Object>());
+inline static char * UnwrapPointer(v8::Handle<v8::Value> buffer, int64_t offset = 0) {
+  if (node::Buffer::HasInstance(buffer)) {
+    return node::Buffer::Data(buffer.As<v8::Object>()) + offset;
+  } else {
+    return NULL;
+  }
 }
