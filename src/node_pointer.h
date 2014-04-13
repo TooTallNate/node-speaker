@@ -43,3 +43,13 @@ inline static char * UnwrapPointer(v8::Handle<v8::Value> buffer, int64_t offset 
     return NULL;
   }
 }
+
+/**
+ * Templated version of UnwrapPointer that does a reinterpret_cast() on the
+ * pointer before returning it.
+ */
+
+template <typename Type>
+inline static Type UnwrapPointer(v8::Handle<v8::Value> buffer) {
+  return reinterpret_cast<Type>(UnwrapPointer(buffer));
+}
