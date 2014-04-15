@@ -173,6 +173,7 @@ Speaker.prototype._write = function (chunk, encoding, done) {
     // close() has already been called. this should not be called
     return done(new Error('write() call after close() call'));
   }
+  var self = this;
   var b;
   var left = chunk;
   var handle = this.audio_handle;
@@ -203,7 +204,7 @@ Speaker.prototype._write = function (chunk, encoding, done) {
     debug('wrote %d bytes', r);
     if (r != b.length) {
       done(new Error('write() failed: ' + r));
-    } else if (left) {
+    } else if (left && !self._closed) {
       debug('still %d bytes left in this chunk', left.length);
       write();
     } else {
