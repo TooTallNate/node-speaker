@@ -266,6 +266,6 @@ Speaker.prototype.close = function () {
     this.audio_handle = null;
   }
 
-  this.emit('close');
   this._closed = true;
+  this.emit('close');
 };
