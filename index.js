@@ -251,19 +251,23 @@ Speaker.prototype._unpipe = function (source) {
  */
 
 Speaker.prototype._flush = function () {
-  debug('_flush()');
+    var self = this;
 
-  // TODO: async definitely
-  binding.flush(this.audio_handle);
+    debug('_flush()');
 
-  this.emit('flush');
+    // XXX: The audio backends keep ~.5 seconds worth of buffered audio data
+    // in their system, so presumably there will be .5 seconds *more* of audio data
+    // coming out the speakers, so we must keep the event loop alive so the process
+    // doesn't exit. This is a nasty, nasty hack and hopefully there's a better way
+    // to be notified when the audio has acutally finished playing.
+    setTimeout(function() {
+        // TODO: async definitely
+        binding.flush(this.audio_handle);
 
-  // XXX: The audio backends keep ~.5 seconds worth of buffered audio data
-  // in their system, so presumably there will be .5 seconds *more* of audio data
-  // coming out the speakers, so we must keep the event loop alive so the process
-  // doesn't exit. This is a nasty, nasty hack and hopefully there's a better way
-  // to be notified when the audio has acutally finished playing.
-  setTimeout(this.close.bind(this), 600);
+        self.emit('flush');
+
+        self.close.bind(self);
+    },600);
 };
 
 /**
