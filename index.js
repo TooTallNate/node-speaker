@@ -7,15 +7,12 @@ var os = require('os');
 var debug = require('debug')('speaker');
 var binding = require('bindings')('binding');
 var inherits = require('util').inherits;
-var Writable = require('stream').Writable;
+var Writable = require('readable-stream/writable');
 
 // determine the native host endianness, the only supported playback endianness
 var endianness = 'function' == os.endianness ?
                  os.endianness() :
                  'LE'; // assume little-endian for older versions of node.js
-
-// node v0.8.x compat
-if (!Writable) Writable = require('readable-stream/writable');
 
 /**
  * Module exports.
