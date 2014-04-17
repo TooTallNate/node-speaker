@@ -168,6 +168,7 @@ Speaker.prototype._write = function (chunk, encoding, done) {
     return done(new Error('write() call after close() call'));
   }
   var b;
+  var self = this;
   var left = chunk;
   var handle = this.audio_handle;
   if (!handle) {
@@ -181,6 +182,10 @@ Speaker.prototype._write = function (chunk, encoding, done) {
   var chunkSize = this.blockAlign * this.samplesPerFrame;
 
   function write () {
+    if (self._closed) {
+      debug('aborting remainder of write() call (%d bytes) since speaker is `_closed`', left.length);
+      return done();
+    }
     b = left;
     if (b.length > chunkSize) {
       var t = b;
