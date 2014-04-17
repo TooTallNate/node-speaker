@@ -1,4 +1,19 @@
 
+0.1.0 / 2014-04-17
+==================
+
+  * index: abort write() call if `_close` is set (#28, #29)
+  * package: tighten up the dependencies' versions
+  * index: add a debug() call
+  * index: emit "close" after setting `_closed`
+  * index: use the "readable-stream" copy of Writable
+  * package: pin "readable-stream" to any v1.0.x
+  * examples: fix "sine" emitting "end" event
+  * travis: test node v0.11
+  * use `rvagg/nan`
+  * fix History.md note
+  * fix sinewave example on 0.10 (Stream API changes) (#12, @jfmatt)
+
 0.0.10 / 2013-05-08
 ===================
 
