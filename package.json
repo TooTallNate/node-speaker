@@ -33,7 +33,7 @@
     "bindings": "*",
     "debug": "*",
     "nan": "~0.8.0",
-    "readable-stream": "*"
+    "readable-stream": "1.0"
   },
   "devDependencies": {
     "mocha": "*"
