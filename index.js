@@ -258,7 +258,7 @@ Speaker.prototype._flush = function () {
 
 Speaker.prototype.close = function () {
   debug('close()');
-  if (this._closed) return;
+  if (this._closed) return debug('already closed...');
 
   if (this.audio_handle) {
     // TODO: async maybe?
