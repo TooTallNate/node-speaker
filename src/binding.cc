@@ -116,7 +116,7 @@ void write_after (uv_work_t *req) {
   callback->Call(Context::GetCurrent()->Global(), 1, argv);
 
   // cleanup
-  wreq->callback.Dispose();
+  NanDisposePersistent(wreq->callback);
   delete wreq;
 
   if (try_catch.HasCaught()) {
