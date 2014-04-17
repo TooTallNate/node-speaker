@@ -60,6 +60,7 @@ function Speaker (opts) {
 
   this.on('finish', this._flush);
   this.on('pipe', this._pipe);
+  this.on('unpipe', this._unpipe);
 }
 inherits(Speaker, Writable);
 
@@ -225,7 +226,22 @@ Speaker.prototype._write = function (chunk, encoding, done) {
 Speaker.prototype._pipe = function (source) {
   debug('_pipe()');
   this._format(source);
-  source.once('format', this._format.bind(this));
+  this._once_format_cb = this._format.bind(this);
+  source.once('format', this._once_format_cb);
+};
+
+/**
+ * Called when this stream is pipe()d to from another readable stream.
+ * If the "sampleRate", "channels", "bitDepth", and "signed" properties are
+ * set, then they will be used over the currently set values.
+ *
+ * @api private
+ */
+
+Speaker.prototype._unpipe = function (source) {
+  debug('_unpipe()');
+  source.removeListener('format', this._once_format_cb);
+  delete this._once_format_cb;
 };
 
 /**
