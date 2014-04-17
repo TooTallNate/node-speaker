@@ -58,6 +58,8 @@ function Speaker (opts) {
   // set PCM format
   this._format(opts);
 
+  // bind event listeners
+  this._format = this._format.bind(this);
   this.on('finish', this._flush);
   this.on('pipe', this._pipe);
   this.on('unpipe', this._unpipe);
@@ -226,8 +228,7 @@ Speaker.prototype._write = function (chunk, encoding, done) {
 Speaker.prototype._pipe = function (source) {
   debug('_pipe()');
   this._format(source);
-  this._once_format_cb = this._format.bind(this);
-  source.once('format', this._once_format_cb);
+  source.once('format', this._format);
 };
 
 /**
@@ -240,8 +241,7 @@ Speaker.prototype._pipe = function (source) {
 
 Speaker.prototype._unpipe = function (source) {
   debug('_unpipe()');
-  source.removeListener('format', this._once_format_cb);
-  delete this._once_format_cb;
+  source.removeListener('format', this._format);
 };
 
 /**
