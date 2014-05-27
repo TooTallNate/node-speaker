@@ -22,7 +22,7 @@ struct write_req {
   unsigned char *buffer;
   int len;
   int written;
-  Persistent<Function> callback;
+  NanCallback *callback;
 };
 
 NAN_METHOD(Open) {
@@ -83,14 +83,13 @@ NAN_METHOD(Write) {
   audio_output_t *ao = UnwrapPointer<audio_output_t *>(args[0]);
   unsigned char *buffer = UnwrapPointer<unsigned char *>(args[1]);
   int len = args[2]->Int32Value();
-  Local<Function> callback = Local<Function>::Cast(args[3]);
 
   write_req *req = new write_req;
   req->ao = ao;
   req->buffer = buffer;
   req->len = len;
   req->written = 0;
-  NanAssignPersistent(req->callback, callback);
+  req->callback = new NanCallback(args[3].As<Function>());
 
   req->req.data = req;
 
@@ -108,20 +107,13 @@ void write_after (uv_work_t *req) {
   NanScope();
   write_req *wreq = reinterpret_cast<write_req *>(req->data);
 
-  Handle<Value> argv[1] = { NanNew<v8::Integer>(wreq->written) };
+  Handle<Value> argv[] = {
+    NanNew<v8::Integer>(wreq->written)
+  };
 
-  TryCatch try_catch;
+  wreq->callback->Call(1, argv);
 
-  Local<Function> callback = NanNew(wreq->callback);
-  callback->Call(Context::GetCurrent()->Global(), 1, argv);
-
-  // cleanup
-  NanDisposePersistent(wreq->callback);
-  delete wreq;
-
-  if (try_catch.HasCaught()) {
-    FatalException(try_catch);
-  }
+  delete wreq->callback;
 }
 
 NAN_METHOD(Flush) {
