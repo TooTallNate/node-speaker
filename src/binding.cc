@@ -26,19 +26,19 @@ struct write_req {
 };
 
 NAN_METHOD(Open) {
-  NanScope();
+  NanEscapableScope();
   int r;
   audio_output_t *ao = UnwrapPointer<audio_output_t *>(args[0]);
   memset(ao, 0, sizeof(audio_output_t));
 
-  Local<Object> format = args[1]->ToObject();
+  Local<Object> format = args[1].As<Object>();
 
-  ao->channels = format->Get(NanSymbol("channels"))->Int32Value(); /* channels */
-  ao->rate = format->Get(NanSymbol("sampleRate"))->Int32Value(); /* sample rate */
+  ao->channels = format->Get(NanNew<v8::String>("channels"))->Int32Value(); /* channels */
+  ao->rate = format->Get(NanNew<v8::String>("sampleRate"))->Int32Value(); /* sample rate */
   int f = 0;
-  int bitDepth = format->Get(NanSymbol("bitDepth"))->Int32Value();
-  bool isSigned = format->Get(NanSymbol("signed"))->BooleanValue();
-  bool isFloat = format->Get(NanSymbol("float"))->BooleanValue();
+  int bitDepth = format->Get(NanNew<v8::String>("bitDepth"))->Int32Value();
+  bool isSigned = format->Get(NanNew<v8::String>("signed"))->BooleanValue();
+  bool isFloat = format->Get(NanNew<v8::String>("float"))->BooleanValue();
   if (bitDepth == 32 && isFloat && isSigned) {
     f = MPG123_ENC_FLOAT_32;
   } else if (bitDepth == 64 && isFloat && isSigned) {
@@ -72,7 +72,7 @@ NAN_METHOD(Open) {
     r = ao->open(ao);
   }
 
-  NanReturnValue(Integer::New(r));
+  NanReturnValue(NanNew<v8::Integer>(r));
 }
 
 void write_async (uv_work_t *);
@@ -90,7 +90,7 @@ NAN_METHOD(Write) {
   req->buffer = buffer;
   req->len = len;
   req->written = 0;
-  NanAssignPersistent(Function, req->callback, callback);
+  NanAssignPersistent(req->callback, callback);
 
   req->req.data = req;
 
@@ -112,7 +112,7 @@ void write_after (uv_work_t *req) {
 
   TryCatch try_catch;
 
-  Local<Function> callback = NanPersistentToLocal(wreq->callback);
+  Local<Function> callback = NanNew(wreq->callback);
   callback->Call(Context::GetCurrent()->Global(), 1, argv);
 
   // cleanup
@@ -133,24 +133,24 @@ NAN_METHOD(Flush) {
 }
 
 NAN_METHOD(Close) {
-  NanScope();
+  NanEscapableScope();
   audio_output_t *ao = UnwrapPointer<audio_output_t *>(args[0]);
   ao->close(ao);
   int r = 0;
   if (ao->deinit) {
     r = ao->deinit(ao);
   }
-  NanReturnValue(Integer::New(r));
+  NanReturnValue(NanNew<v8::Integer>(r));
 }
 
 void Initialize(Handle<Object> target) {
   NanScope();
-  target->Set(NanSymbol("api_version"), Integer::New(mpg123_output_module_info.api_version));
-  target->Set(NanSymbol("name"), String::New(mpg123_output_module_info.name));
-  target->Set(NanSymbol("description"), String::New(mpg123_output_module_info.description));
-  target->Set(NanSymbol("revision"), String::New(mpg123_output_module_info.revision));
+  target->Set(NanNew<v8::String>("api_version"), NanNew<v8::Integer>(mpg123_output_module_info.api_version));
+  target->Set(NanNew<v8::String>("name"), NanNew<v8::String>(mpg123_output_module_info.name));
+  target->Set(NanNew<v8::String>("description"), NanNew<v8::String>(mpg123_output_module_info.description));
+  target->Set(NanNew<v8::String>("revision"), NanNew<v8::String>(mpg123_output_module_info.revision));
 
-  target->Set(NanSymbol("sizeof_audio_output_t"), Integer::New(sizeof(audio_output_t)));
+  target->Set(NanNew<v8::String>("sizeof_audio_output_t"), NanNew<v8::Integer>(sizeof(audio_output_t)));
 
   NODE_SET_METHOD(target, "open", Open);
   NODE_SET_METHOD(target, "write", Write);
