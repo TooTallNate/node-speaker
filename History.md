@@ -1,4 +1,15 @@
 
+0.1.1 / 2014-05-27
+==================
+
+  * binding: update to nan v1.1.0 API, fixes node v0.11.13+
+  * add appveyor.yml file for Windows testing
+  * README: add appveyor build badge
+  * README: use svg for travis badge
+  * travis: don't test node v0.9.x
+  * index: make _format() bind to the speaker instance
+  * don't leave event listeners behind (#22, @LinusU)
+
 0.1.0 / 2014-04-17
 ==================
 
