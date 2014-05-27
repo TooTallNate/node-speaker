@@ -108,7 +108,7 @@ void write_after (uv_work_t *req) {
   NanScope();
   write_req *wreq = reinterpret_cast<write_req *>(req->data);
 
-  Handle<Value> argv[1] = { Integer::New(wreq->written) };
+  Handle<Value> argv[1] = { NanNew<v8::Integer>(wreq->written) };
 
   TryCatch try_catch;
 
