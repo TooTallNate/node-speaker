@@ -1,4 +1,10 @@
 
+0.1.2 / 2014-06-02
+==================
+
+  * package: update "nan" to v1.1.2
+  * package: update "mocha" dev dependency
+
 0.1.1 / 2014-05-27
 ==================
 
