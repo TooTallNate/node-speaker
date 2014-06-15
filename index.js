@@ -52,6 +52,9 @@ function Speaker (opts) {
   // CoreAudio backend)
   this.samplesPerFrame = 1024;
 
+  // the `audio_output_t` struct pointer Buffer instance
+  this.audio_handle = null;
+
   // flipped after close() is called, no write() calls allowed after
   this._closed = false;
 
@@ -245,25 +248,16 @@ Speaker.prototype._unpipe = function (source) {
 };
 
 /**
- * Calls the `flush()` bindings for the audio backend.
+ * Emits a "flush" event and then calls the `.close()` function on
+ * this Speaker instance.
  *
  * @api private
  */
 
 Speaker.prototype._flush = function () {
   debug('_flush()');
-
-  // TODO: async definitely
-  binding.flush(this.audio_handle);
-
   this.emit('flush');
-
-  // XXX: The audio backends keep ~.5 seconds worth of buffered audio data
-  // in their system, so presumably there will be .5 seconds *more* of audio data
-  // coming out the speakers, so we must keep the event loop alive so the process
-  // doesn't exit. This is a nasty, nasty hack and hopefully there's a better way
-  // to be notified when the audio has acutally finished playing.
-  setTimeout(this.close.bind(this), 600);
+  this.close(false);
 };
 
 /**
@@ -271,17 +265,27 @@ Speaker.prototype._flush = function () {
  * after the audio backend has finished playing the audio buffer through the
  * speakers.
  *
+ * @param {Boolean} flush - if `false`, then don't call the `flush()` native binding call. Defaults to `true`.
  * @api public
  */
 
-Speaker.prototype.close = function () {
-  debug('close()');
+Speaker.prototype.close = function (flush) {
+  debug('close(%o)', flush);
   if (this._closed) return debug('already closed...');
 
   if (this.audio_handle) {
+    if (false !== flush) {
+      // TODO: async most likely…
+      debug('invoking flush() native binding');
+      binding.flush(this.audio_handle);
+    }
+
     // TODO: async maybe?
+    debug('invoking close() native binding');
     binding.close(this.audio_handle);
     this.audio_handle = null;
+  } else {
+    debug('not invoking flush() or close() bindings since no `audio_handle`');
   }
 
   this._closed = true;
