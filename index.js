@@ -79,19 +79,19 @@ Speaker.prototype._open = function () {
   }
   // set default options, if not set
   if (null == this.channels) {
-    debug('setting default "channels"', 2);
+    debug('setting default "channels": %o', 2);
     this.channels = 2;
   }
   if (null == this.bitDepth) {
-    debug('setting default "bitDepth"', 16);
+    debug('setting default "bitDepth": %o', 16);
     this.bitDepth = 16;
   }
   if (null == this.sampleRate) {
-    debug('setting default "sampleRate"', 44100);
+    debug('setting default "sampleRate", %o', 44100);
     this.sampleRate = 44100;
   }
   if (null == this.signed) {
-    debug('setting default "signed"', this.bitDepth != 8);
+    debug('setting default "signed": %o', this.bitDepth != 8);
     this.signed = this.bitDepth != 8;
   }
 
@@ -120,29 +120,29 @@ Speaker.prototype._open = function () {
  */
 
 Speaker.prototype._format = function (opts) {
-  debug('format(keys = %j)', Object.keys(opts));
+  debug('format(object keys = %o)', Object.keys(opts));
   if (null != opts.channels) {
-    debug('setting "channels"', opts.channels);
+    debug('setting "channels": %o', opts.channels);
     this.channels = opts.channels;
   }
   if (null != opts.bitDepth) {
-    debug('setting "bitDepth"', opts.bitDepth);
+    debug('setting "bitDepth": %o', opts.bitDepth);
     this.bitDepth = opts.bitDepth;
   }
   if (null != opts.sampleRate) {
-    debug('setting "sampleRate"', opts.sampleRate);
+    debug('setting "sampleRate": %o', opts.sampleRate);
     this.sampleRate = opts.sampleRate;
   }
   if (null != opts.float) {
-    debug('setting "float"', opts.float);
+    debug('setting "float": %o', opts.float);
     this.float = opts.float;
   }
   if (null != opts.signed) {
-    debug('setting "signed"', opts.signed);
+    debug('setting "signed": %o', opts.signed);
     this.signed = opts.signed;
   }
   if (null != opts.samplesPerFrame) {
-    debug('setting "samplesPerFrame"', opts.samplesPerFrame);
+    debug('setting "samplesPerFrame": %o', opts.samplesPerFrame);
     this.samplesPerFrame = opts.samplesPerFrame;
   }
   if (null == opts.endianness || endianness == opts.endianness) {
@@ -186,7 +186,7 @@ Speaker.prototype._write = function (chunk, encoding, done) {
 
   function write () {
     if (self._closed) {
-      debug('aborting remainder of write() call (%d bytes) since speaker is `_closed`', left.length);
+      debug('aborting remainder of write() call (%d bytes), since speaker is `_closed`', left.length);
       return done();
     }
     b = left;
@@ -197,16 +197,16 @@ Speaker.prototype._write = function (chunk, encoding, done) {
     } else {
       left = null;
     }
-    debug('writing %d byte chunk', b.length);
+    debug('writing %o byte chunk', b.length);
     binding.write(handle, b, b.length, onwrite);
   }
 
   function onwrite (r) {
-    debug('wrote %d bytes', r);
+    debug('wrote %o bytes', r);
     if (r != b.length) {
       done(new Error('write() failed: ' + r));
     } else if (left) {
-      debug('still %d bytes left in this chunk', left.length);
+      debug('still %o bytes left in this chunk', left.length);
       write();
     } else {
       debug('done with this chunk');
