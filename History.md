@@ -1,4 +1,12 @@
 
+0.1.3 / 2014-06-15
+==================
+
+  * index: do not call `flush()` binding when the stream finishes "naturally"
+  * index: use %o formatting from debug v1
+  * package: update "nan" to v1.2.0
+  * package: update "debug" to v1.0.0
+
 0.1.2 / 2014-06-02
 ==================
 
