@@ -168,7 +168,7 @@ Speaker.prototype._format = function (opts) {
  */
 
 Speaker.prototype._write = function (chunk, encoding, done) {
-  debug('_write() (%d bytes)', chunk.length);
+  debug('_write() (%o bytes)', chunk.length);
 
   if (this._closed) {
     // close() has already been called. this should not be called
@@ -190,7 +190,7 @@ Speaker.prototype._write = function (chunk, encoding, done) {
 
   function write () {
     if (self._closed) {
-      debug('aborting remainder of write() call (%d bytes), since speaker is `_closed`', left.length);
+      debug('aborting remainder of write() call (%o bytes), since speaker is `_closed`', left.length);
       return done();
     }
     b = left;
