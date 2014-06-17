@@ -82,20 +82,20 @@ Speaker.prototype._open = function () {
   }
   // set default options, if not set
   if (null == this.channels) {
-    debug('setting default "channels": %o', 2);
+    debug('setting default %o: %o', 'channels', 2);
     this.channels = 2;
   }
   if (null == this.bitDepth) {
     var depth = this.float ? 32 : 16;
-    debug('setting default "bitDepth": %o', depth);
+    debug('setting default %o: %o', 'bitDepth', depth);
     this.bitDepth = depth;
   }
   if (null == this.sampleRate) {
-    debug('setting default "sampleRate", %o', 44100);
+    debug('setting default %o: %o', 'sampleRate', 44100);
     this.sampleRate = 44100;
   }
   if (null == this.signed) {
-    debug('setting default "signed": %o', this.bitDepth != 8);
+    debug('setting default %o: %o', 'signed', this.bitDepth != 8);
     this.signed = this.bitDepth != 8;
   }
 
@@ -126,27 +126,27 @@ Speaker.prototype._open = function () {
 Speaker.prototype._format = function (opts) {
   debug('format(object keys = %o)', Object.keys(opts));
   if (null != opts.channels) {
-    debug('setting "channels": %o', opts.channels);
+    debug('setting %o: %o', 'channels', opts.channels);
     this.channels = opts.channels;
   }
   if (null != opts.bitDepth) {
-    debug('setting "bitDepth": %o', opts.bitDepth);
+    debug('setting %o: %o', "bitDepth", opts.bitDepth);
     this.bitDepth = opts.bitDepth;
   }
   if (null != opts.sampleRate) {
-    debug('setting "sampleRate": %o', opts.sampleRate);
+    debug('setting %o: %o', "sampleRate", opts.sampleRate);
     this.sampleRate = opts.sampleRate;
   }
   if (null != opts.float) {
-    debug('setting "float": %o', opts.float);
+    debug('setting %o: %o', "float", opts.float);
     this.float = opts.float;
   }
   if (null != opts.signed) {
-    debug('setting "signed": %o', opts.signed);
+    debug('setting %o: %o', "signed", opts.signed);
     this.signed = opts.signed;
   }
   if (null != opts.samplesPerFrame) {
-    debug('setting "samplesPerFrame": %o', opts.samplesPerFrame);
+    debug('setting %o: %o', "samplesPerFrame", opts.samplesPerFrame);
     this.samplesPerFrame = opts.samplesPerFrame;
   }
   if (null == opts.endianness || endianness == opts.endianness) {
