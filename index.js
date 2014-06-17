@@ -86,8 +86,9 @@ Speaker.prototype._open = function () {
     this.channels = 2;
   }
   if (null == this.bitDepth) {
-    debug('setting default "bitDepth": %o', 16);
-    this.bitDepth = 16;
+    var depth = this.float ? 32 : 16;
+    debug('setting default "bitDepth": %o', depth);
+    this.bitDepth = depth;
   }
   if (null == this.sampleRate) {
     debug('setting default "sampleRate", %o', 44100);
