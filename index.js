@@ -163,7 +163,7 @@ Speaker.prototype._open = function () {
   // initialize the audio handle
   // TODO: open async?
   this.audio_handle = new Buffer(binding.sizeof_audio_output_t);
-  var r = binding.open(this.audio_handle, this);
+  var r = binding.open(this.audio_handle, this.channels, this.sampleRate, format);
   if (0 !== r) {
     throw new Error('open() failed: ' + r);
   }

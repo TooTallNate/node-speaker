@@ -31,39 +31,9 @@ NAN_METHOD(Open) {
   audio_output_t *ao = UnwrapPointer<audio_output_t *>(args[0]);
   memset(ao, 0, sizeof(audio_output_t));
 
-  Local<Object> format = args[1].As<Object>();
-
-  ao->channels = format->Get(NanNew<v8::String>("channels"))->Int32Value(); /* channels */
-  ao->rate = format->Get(NanNew<v8::String>("sampleRate"))->Int32Value(); /* sample rate */
-  int f = 0;
-  int bitDepth = format->Get(NanNew<v8::String>("bitDepth"))->Int32Value();
-  bool isSigned = format->Get(NanNew<v8::String>("signed"))->BooleanValue();
-  bool isFloat = format->Get(NanNew<v8::String>("float"))->BooleanValue();
-  if (bitDepth == 32 && isFloat && isSigned) {
-    f = MPG123_ENC_FLOAT_32;
-  } else if (bitDepth == 64 && isFloat && isSigned) {
-    f = MPG123_ENC_FLOAT_64;
-  } else if (bitDepth == 8 && isSigned) {
-    f = MPG123_ENC_SIGNED_8;
-  } else if (bitDepth == 8 && !isSigned) {
-    f = MPG123_ENC_UNSIGNED_8;
-  } else if (bitDepth == 16 && isSigned) {
-    f = MPG123_ENC_SIGNED_16;
-  } else if (bitDepth == 16 && !isSigned) {
-    f = MPG123_ENC_UNSIGNED_16;
-  } else if (bitDepth == 24 && isSigned) {
-    f = MPG123_ENC_SIGNED_24;
-  } else if (bitDepth == 24 && !isSigned) {
-    f = MPG123_ENC_UNSIGNED_24;
-  } else if (bitDepth == 32 && isSigned) {
-    f = MPG123_ENC_SIGNED_32;
-  } else if (bitDepth == 32 && !isSigned) {
-    f = MPG123_ENC_UNSIGNED_32;
-  } else {
-    return NanThrowTypeError("unsupported format");
-  }
-  /* TODO: support ulaw and alaw? */
-  ao->format = f; /* bit depth, is signed?, int/float */
+  ao->channels = args[1]->Int32Value(); /* channels */
+  ao->rate = args[2]->Int32Value(); /* sample rate */
+  ao->format = args[3]->Int32Value(); /* MPG123_ENC_* format */
 
   /* init_output() */
   r = mpg123_output_module_info.init_output(ao);
