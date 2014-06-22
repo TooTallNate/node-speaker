@@ -105,4 +105,16 @@ describe('Speaker', function () {
     });
   });
 
+  it('should throw an Error if a non-supported "format" is specified', function (done) {
+    var speaker = new Speaker({
+      bitDepth: 31,
+      signed: true
+    });
+    speaker.once('error', function (err) {
+      assert.equal('invalid PCM format specified', err.message);
+      done();
+    });
+    speaker.write('a');
+  });
+
 });

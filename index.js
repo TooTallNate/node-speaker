@@ -148,6 +148,15 @@ Speaker.prototype._open = function () {
     this.signed = this.bitDepth != 8;
   }
 
+  var format = exports.getFormat(this);
+  if (null == format) {
+    throw new Error('invalid PCM format specified');
+  }
+
+  if (!exports.isSupported(format)) {
+    throw new Error('specified PCM format is not supported by "' + binding.name + '" backend');
+  }
+
   // calculate the "block align"
   this.blockAlign = this.bitDepth / 8 * this.channels;
 
