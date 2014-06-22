@@ -93,13 +93,13 @@ describe('Speaker', function () {
     done();
   });
 
-  it('should not throw an Error if native endianness is specified', function () {
+  it('should not throw an Error if native "endianness" is specified', function () {
     assert.doesNotThrow(function () {
       new Speaker({ endianness: endianness });
     });
   });
 
-  it('should throw an Error if non-native endianness is specified', function () {
+  it('should throw an Error if non-native "endianness" is specified', function () {
     assert.throws(function () {
       new Speaker({ endianness: opposite });
     });
