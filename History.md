@@ -1,4 +1,18 @@
 
+0.2.0 / 2014-06-22
+==================
+
+ * gitignore: ignore root-level dev files
+ * index: pass the `format` directly to the native open() binding
+ * index: ensure a valid and supported "format" is given to Speaker instance
+ * test: add quotes to test names
+ * index: add `getFormat()` and `isSupported()` functions
+ * binding: export the `MPG123_ENC_*` constants
+ * binding: export the result of `get_formats()`
+ * mpg123: add 64-bit float playback support for CoreAudio backend
+ * index: use %o formatter some more
+ * index: default `float` to 32-bit `bitDepth`
+
 0.1.3 / 2014-06-15
 ==================
 
