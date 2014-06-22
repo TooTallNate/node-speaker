@@ -148,6 +148,21 @@ void Initialize(Handle<Object> target) {
 
   target->Set(NanNew<v8::String>("sizeof_audio_output_t"), NanNew<v8::Integer>(sizeof(audio_output_t)));
 
+#define CONST_INT(value) \
+  target->Set(NanNew<v8::String>(#value), NanNew<v8::Integer>(value), \
+      static_cast<PropertyAttribute>(ReadOnly|DontDelete));
+
+  CONST_INT(MPG123_ENC_FLOAT_32);
+  CONST_INT(MPG123_ENC_FLOAT_64);
+  CONST_INT(MPG123_ENC_SIGNED_8);
+  CONST_INT(MPG123_ENC_UNSIGNED_8);
+  CONST_INT(MPG123_ENC_SIGNED_16);
+  CONST_INT(MPG123_ENC_UNSIGNED_16);
+  CONST_INT(MPG123_ENC_SIGNED_24);
+  CONST_INT(MPG123_ENC_UNSIGNED_24);
+  CONST_INT(MPG123_ENC_SIGNED_32);
+  CONST_INT(MPG123_ENC_UNSIGNED_32);
+
   NODE_SET_METHOD(target, "open", Open);
   NODE_SET_METHOD(target, "write", Write);
   NODE_SET_METHOD(target, "flush", Flush);
