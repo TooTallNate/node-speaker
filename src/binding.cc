@@ -142,6 +142,10 @@ void Initialize(Handle<Object> target) {
   target->Set(NanNew<v8::String>("description"), NanNew<v8::String>(mpg123_output_module_info.description));
   target->Set(NanNew<v8::String>("revision"), NanNew<v8::String>(mpg123_output_module_info.revision));
 
+  audio_output_t ao;
+  mpg123_output_module_info.init_output(&ao);
+  target->Set(NanNew<v8::String>("formats"), NanNew<v8::Integer>(ao.get_formats(&ao)));
+
   target->Set(NanNew<v8::String>("sizeof_audio_output_t"), NanNew<v8::Integer>(sizeof(audio_output_t)));
 
   NODE_SET_METHOD(target, "open", Open);
