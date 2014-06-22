@@ -65,6 +65,7 @@ base class options, as well as any of these PCM formatting options:
   * `bitDepth` - The number of bits per sample. Defaults to `16` (16-bit).
   * `sampleRate` - The number of samples per second per channel. Defaults to `44100`.
   * `signed` - Boolean specifying if the samples are signed or unsigned. Defaults to `true` when bit depth is 8-bit, `false` otherwise.
+  * `float` - Boolean specifying if the samples are floating-point values. Defaults to `false`.
   * `samplesPerFrame` The number of samples to send to the audio backend at a time. You likely don't need to mess with this value. Defaults to `1024`.
 
 #### "open" event
