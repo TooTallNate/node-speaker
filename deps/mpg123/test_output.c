@@ -2,7 +2,7 @@
  * the default audio output device.
  */
 
-#include "mpg123app.h"
+#include "output.h"
 #include <string.h>
 #include <stdio.h>
 

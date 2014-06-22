@@ -197,6 +197,10 @@ static int open_coreaudio(audio_output_t *ao)
 			inFormat.mFormatFlags |= kLinearPCMFormatFlagIsFloat;
 			ca->bps = 4;
 			break;
+		case MPG123_ENC_FLOAT_64:
+			inFormat.mFormatFlags |= kLinearPCMFormatFlagIsFloat;
+			ca->bps = 4;
+			break;
 	}
 	
 	inFormat.mBitsPerChannel = ca->bps << 3;
@@ -241,7 +245,7 @@ static int open_coreaudio(audio_output_t *ao)
 
 static int get_formats_coreaudio(audio_output_t *ao)
 {
-	return MPG123_ENC_SIGNED_16|MPG123_ENC_SIGNED_8|MPG123_ENC_UNSIGNED_8|MPG123_ENC_SIGNED_32|MPG123_ENC_FLOAT_32;
+	return MPG123_ENC_SIGNED_16|MPG123_ENC_SIGNED_8|MPG123_ENC_UNSIGNED_8|MPG123_ENC_SIGNED_32|MPG123_ENC_FLOAT_32|MPG123_ENC_FLOAT_64;
 }
 
 static int write_coreaudio(audio_output_t *ao, unsigned char *buf, int len)
