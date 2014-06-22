@@ -29,6 +29,55 @@ exports.description = binding.description;
 exports.module_name = binding.name;
 
 /**
+ * Returns the `MPG123_ENC_*` constant that corresponds to the given "format"
+ * object, or `null` if the format is invalid.
+ *
+ * @param {Object} format - format object with `channels`, `sampleRate`, `bitDepth`, etc.
+ * @return {Number} MPG123_ENC_* constant, or `null`
+ * @api public
+ */
+
+exports.getFormat = function getFormat (format) {
+  var f = null;
+  if (format.bitDepth == 32 && format.float && format.signed) {
+    f = binding.MPG123_ENC_FLOAT_32;
+  } else if (format.bitDepth == 64 && format.float && format.signed) {
+    f = binding.MPG123_ENC_FLOAT_64;
+  } else if (format.bitDepth == 8 && format.signed) {
+    f = binding.MPG123_ENC_SIGNED_8;
+  } else if (format.bitDepth == 8 && !format.signed) {
+    f = binding.MPG123_ENC_UNSIGNED_8;
+  } else if (format.bitDepth == 16 && format.signed) {
+    f = binding.MPG123_ENC_SIGNED_16;
+  } else if (format.bitDepth == 16 && !format.signed) {
+    f = binding.MPG123_ENC_UNSIGNED_16;
+  } else if (format.bitDepth == 24 && format.signed) {
+    f = binding.MPG123_ENC_SIGNED_24;
+  } else if (format.bitDepth == 24 && !format.signed) {
+    f = binding.MPG123_ENC_UNSIGNED_24;
+  } else if (format.bitDepth == 32 && format.signed) {
+    f = binding.MPG123_ENC_SIGNED_32;
+  } else if (format.bitDepth == 32 && !format.signed) {
+    f = binding.MPG123_ENC_UNSIGNED_32;
+  }
+  return f;
+}
+
+/**
+ * Returns `true` if the given "format" is playable via the "output module"
+ * that was selected during compilation, or `false` if not playable.
+ *
+ * @param {Number} format - MPG123_ENC_* format constant
+ * @return {Boolean} true if the format is playable, false otherwise
+ * @api public
+ */
+
+exports.isSupported = function isSupported (format) {
+  if ('number' !== typeof format) format = exports.getFormat(format);
+  return (binding.formats & format) === format;
+}
+
+/**
  * The `Speaker` class accepts raw PCM data written to it, and then sends that data
  * to the default output device of the OS.
  *
