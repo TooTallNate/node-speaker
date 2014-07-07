@@ -113,8 +113,14 @@ void Initialize(Handle<Object> target) {
   target->Set(NanNew<v8::String>("revision"), NanNew<v8::String>(mpg123_output_module_info.revision));
 
   audio_output_t ao;
+  memset(&ao, 0, sizeof(audio_output_t));
   mpg123_output_module_info.init_output(&ao);
+  ao.channels = 2;
+  ao.rate = 44100;
+  ao.format = MPG123_ENC_SIGNED_16;
+  ao.open(&ao);
   target->Set(NanNew<v8::String>("formats"), NanNew<v8::Integer>(ao.get_formats(&ao)));
+  ao.close(&ao);
 
   target->Set(NanNew<v8::String>("sizeof_audio_output_t"), NanNew<v8::Integer>(sizeof(audio_output_t)));
 
