@@ -3,10 +3,6 @@ node_js:
   - "0.8"
   - "0.10"
   - "0.11"
-before_install:
-  - sudo apt-get update
-  - sudo apt-get install libasound2-dev
 env:
   matrix:
-    - npm_config_mpg123_backend=alsa
     - npm_config_mpg123_backend=dummy
