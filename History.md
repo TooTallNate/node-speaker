@@ -1,4 +1,10 @@
 
+0.2.1 / 2014-07-07
+==================
+
+ * src: call open() and close() on the dummy audio_output_t instance (#36)
+ * README: document the `float` format option
+
 0.2.0 / 2014-06-22
 ==================
 
