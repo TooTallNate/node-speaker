@@ -147,6 +147,15 @@ Speaker.prototype._open = function () {
     debug('setting default %o: %o', 'signed', this.bitDepth != 8);
     this.signed = this.bitDepth != 8;
   }
+  if (null == this.bufferSize) {
+	debug('setting defualt %o: %o', 'bufferSize', 0x10000);
+	this.bufferSize = 0x10000;
+  }
+  
+  if (null == this.numBuffers) {
+	debug('setting default %o: %o', 'numBuffers', 8);
+	this.numBuffers = 8;
+  }
 
   var format = exports.getFormat(this);
   if (null == format) {
@@ -163,7 +172,7 @@ Speaker.prototype._open = function () {
   // initialize the audio handle
   // TODO: open async?
   this.audio_handle = new Buffer(binding.sizeof_audio_output_t);
-  var r = binding.open(this.audio_handle, this.channels, this.sampleRate, format);
+  var r = binding.open(this.audio_handle, this.channels, this.sampleRate, format, this.bufferSize, this.numBuffers);
   if (0 !== r) {
     throw new Error('open() failed: ' + r);
   }
@@ -202,6 +211,14 @@ Speaker.prototype._format = function (opts) {
   if (null != opts.signed) {
     debug('setting %o: %o', "signed", opts.signed);
     this.signed = opts.signed;
+  }
+  if (null != opts.bufferSize) {
+	debug('setting %o: %o', "bufferSize", opts.bufferSize);
+	this.bufferSize = opts.bufferSize;
+  }
+  if (null != opts.numBuffers) {
+	debug('setting %o: %o', "numBuffers", opts.numBuffers);
+	this.numBuffers = opts.numBuffers;
   }
   if (null != opts.samplesPerFrame) {
     debug('setting %o: %o', "samplesPerFrame", opts.samplesPerFrame);

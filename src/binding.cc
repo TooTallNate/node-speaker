@@ -34,6 +34,8 @@ NAN_METHOD(Open) {
   ao->channels = args[1]->Int32Value(); /* channels */
   ao->rate = args[2]->Int32Value(); /* sample rate */
   ao->format = args[3]->Int32Value(); /* MPG123_ENC_* format */
+  ao->bufferSize = args[4]->Int32Value();
+  ao->numBuffers = args[5]->Int32Value();
 
   /* init_output() */
   r = mpg123_output_module_info.init_output(ao);
@@ -118,6 +120,8 @@ void Initialize(Handle<Object> target) {
   ao.channels = 2;
   ao.rate = 44100;
   ao.format = MPG123_ENC_SIGNED_16;
+  ao.numBuffers = 8;
+  ao.bufferSize = 0x10000;
   ao.open(&ao);
   target->Set(NanNew<v8::String>("formats"), NanNew<v8::Integer>(ao.get_formats(&ao)));
   ao.close(&ao);
