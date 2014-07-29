@@ -39,7 +39,7 @@ function read (n) {
 
   // the "angle" used in the function, adjusted for the number of
   // channels and sample rate. This value is like the period of the wave.
-  var t = (Math.PI * 2 * freq) / (this.sampleRate * this.channels);
+  var t = (Math.PI * 2 * freq) / this.sampleRate;
 
   for (var i = 0; i < numSamples; i++) {
     // fill with a simple sine wave at max amplitude
