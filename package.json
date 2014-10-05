@@ -25,6 +25,10 @@
     "type": "git",
     "url": "git://github.com/TooTallNate/node-speaker.git"
   },
+  "bugs": {
+    "url": "https://github.com/TooTallNate/node-speaker/issues"
+  },
+  "homepage": "https://github.com/TooTallNate/node-speaker",
   "main": "./index.js",
   "scripts": {
     "test": "node-gyp rebuild --mpg123-backend=dummy && mocha --reporter spec"
