@@ -1,4 +1,13 @@
 
+0.2.2 / 2015-01-13
+==================
+
+  * example: make sine.js produce 220hz, not 440hz (#38, @jproulx)
+  * package: update "mocha" to v2.1.0
+  * package: allow any "debug" v2
+  * package: add "bugs" and "homepage" fields
+  * travis: remove unused "matrix" field
+
 0.2.1 / 2014-07-07
 ==================
 
