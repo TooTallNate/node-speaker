@@ -107,10 +107,10 @@ NAN_METHOD(Close) {
 
 void Initialize(Handle<Object> target) {
   NanScope();
-  target->Set(NanNew<v8::String>("api_version"), NanNew<v8::Integer>(mpg123_output_module_info.api_version));
-  target->Set(NanNew<v8::String>("name"), NanNew<v8::String>(mpg123_output_module_info.name));
-  target->Set(NanNew<v8::String>("description"), NanNew<v8::String>(mpg123_output_module_info.description));
-  target->Set(NanNew<v8::String>("revision"), NanNew<v8::String>(mpg123_output_module_info.revision));
+  target->ForceSet(NanNew<v8::String>("api_version"), NanNew<v8::Integer>(mpg123_output_module_info.api_version));
+  target->ForceSet(NanNew<v8::String>("name"), NanNew<v8::String>(mpg123_output_module_info.name));
+  target->ForceSet(NanNew<v8::String>("description"), NanNew<v8::String>(mpg123_output_module_info.description));
+  target->ForceSet(NanNew<v8::String>("revision"), NanNew<v8::String>(mpg123_output_module_info.revision));
 
   audio_output_t ao;
   memset(&ao, 0, sizeof(audio_output_t));
@@ -119,13 +119,13 @@ void Initialize(Handle<Object> target) {
   ao.rate = 44100;
   ao.format = MPG123_ENC_SIGNED_16;
   ao.open(&ao);
-  target->Set(NanNew<v8::String>("formats"), NanNew<v8::Integer>(ao.get_formats(&ao)));
+  target->ForceSet(NanNew<v8::String>("formats"), NanNew<v8::Integer>(ao.get_formats(&ao)));
   ao.close(&ao);
 
   target->Set(NanNew<v8::String>("sizeof_audio_output_t"), NanNew<v8::Integer>(sizeof(audio_output_t)));
 
 #define CONST_INT(value) \
-  target->Set(NanNew<v8::String>(#value), NanNew<v8::Integer>(value), \
+  target->ForceSet(NanNew<v8::String>(#value), NanNew<v8::Integer>(value), \
       static_cast<PropertyAttribute>(ReadOnly|DontDelete));
 
   CONST_INT(MPG123_ENC_FLOAT_32);
