@@ -218,6 +218,14 @@
             ],
           }
         }],
+        ['mpg123_backend=="pulse"', {
+          'link_settings': {
+            'libraries': [
+              '-lpulse',
+              '-lpulse-simple',
+            ],
+          }
+        }],
       ],
       'sources': [ 'src/output/<(mpg123_backend).c' ],
     },
