@@ -122,7 +122,7 @@ void Initialize(Handle<Object> target) {
   target->ForceSet(NanNew<v8::String>("formats"), NanNew<v8::Integer>(ao.get_formats(&ao)));
   ao.close(&ao);
 
-  target->Set(NanNew<v8::String>("sizeof_audio_output_t"), NanNew<v8::Integer>(sizeof(audio_output_t)));
+  target->Set(NanNew<v8::String>("sizeof_audio_output_t"), NanNew<v8::Integer>(static_cast<uint32_t>(sizeof(audio_output_t))));
 
 #define CONST_INT(value) \
   target->ForceSet(NanNew<v8::String>(#value), NanNew<v8::Integer>(value), \
