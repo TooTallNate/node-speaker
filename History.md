@@ -1,4 +1,9 @@
 
+0.2.3 / 2015-02-20
+==================
+
+  * link pulse-simple when using mpg123 "pulse" backend (#48, @ReneHollander)
+
 0.2.2 / 2015-01-13
 ==================
 
