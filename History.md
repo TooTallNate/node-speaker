@@ -1,4 +1,10 @@
 
+0.2.4 / 2015-02-20
+==================
+
+  * update "nan" to v1.6.2
+  * update binding.cc for node v0.12 / iojs support (#47, @mrinalvirnave)
+
 0.2.3 / 2015-02-20
 ==================
 
