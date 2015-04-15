@@ -1,4 +1,12 @@
 
+0.2.5 / 2015-04-15
+==================
+
+  * package: update "bindings" to v1.2.1
+  * package: update "nan" to v1.7.0
+  * appveyor: test node v0.12, don't test v0.11
+  * travis: test node v0.12, don't test v0.11
+
 0.2.4 / 2015-02-20
 ==================
 
