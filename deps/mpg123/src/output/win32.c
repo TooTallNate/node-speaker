@@ -12,19 +12,10 @@
 #include <windows.h>
 #include "debug.h"
 
-/*
-	Buffer size and number of buffers in the playback ring
-	NOTE: This particular num/size combination performs best under heavy
-	loads for my system, however this may not be true for any hardware/OS out there.
-	Generally, BUFFER_SIZE < 8k || NUM_BUFFERS > 16 || NUM_BUFFERS < 4 are not recommended.
-*/
-#define BUFFER_SIZE 0x10000
-#define NUM_BUFFERS 8  /* total 512k roughly 2.5 sec of CD quality sound */
-
 /* Buffer ring queue state */
 struct queue_state
 {
-	WAVEHDR buffer_headers[NUM_BUFFERS];
+	WAVEHDR* buffer_headers;
 	/* The next buffer to be filled and put in playback */
 	int next_buffer;
 	/* Buffer playback completion event */
@@ -46,12 +37,21 @@ static int open_win32(struct audio_output_struct *ao)
 	/* Allocate queue state struct for this device */
 	state = calloc(1, sizeof(struct queue_state));
 	if(!state) return -1;
-
+	
+	state->buffer_headers = calloc(ao->numBuffers, sizeof(WAVEHDR));
+	if (!state->buffer_headers) {
+		free(state);
+		return -1;
+	}
+	
 	ao->userptr = state;
 	/* Allocate playback buffers */
-	for(i = 0; i < NUM_BUFFERS; i++)
-	if(!(state->buffer_headers[i].lpData = malloc(BUFFER_SIZE)))
-	ereturn(-1, "Out of memory for playback buffers.");
+	for(i = 0; i < ao->numBuffers; i++) {
+		if(!(state->buffer_headers[i].lpData = malloc(ao->bufferSize))) {
+			ereturn(-1, "Out of memory for playback buffers.");
+		}
+		state->buffer_headers[i].dwFlags = WHDR_DONE;
+	}
 
 	state->play_done_event = CreateEvent(0,FALSE,FALSE,0);
 	if(state->play_done_event == INVALID_HANDLE_VALUE) return -1;
@@ -118,7 +118,7 @@ static int write_win32(struct audio_output_struct *ao, unsigned char *buf, int l
 
 	/* Check buffer header and wait if it's being played.
 	   Skip waiting if the buffer is not full yet */
-	while(hdr->dwBufferLength == BUFFER_SIZE && !(hdr->dwFlags & WHDR_DONE))
+	while(hdr->dwBufferLength == ao->bufferSize && !(hdr->dwFlags & WHDR_DONE))
 	{
 		/* debug1("waiting for buffer %i...", state->next_buffer); */
 		WaitForSingleObject(state->play_done_event, INFINITE);
@@ -133,13 +133,13 @@ static int write_win32(struct audio_output_struct *ao, unsigned char *buf, int l
 	}
 
 	/* Now see how much we want to stuff in and then stuff it in. */
-	bufill = BUFFER_SIZE - hdr->dwBufferLength;
+	bufill = ao->bufferSize - hdr->dwBufferLength;
 	if(len < bufill) bufill = len;
 
 	rest_len = len - bufill;
 	memcpy(hdr->lpData + hdr->dwBufferLength, buf, bufill);
 	hdr->dwBufferLength += bufill;
-	if(hdr->dwBufferLength == BUFFER_SIZE)
+	if(hdr->dwBufferLength == ao->bufferSize)
 	{ /* Send the buffer out when it's full. */
 		res = waveOutPrepareHeader(state->waveout, hdr, sizeof(WAVEHDR));
 		if(res != MMSYSERR_NOERROR) ereturn(-1, "Can't write to audio output device (prepare).");
@@ -148,7 +148,7 @@ static int write_win32(struct audio_output_struct *ao, unsigned char *buf, int l
 		if(res != MMSYSERR_NOERROR) ereturn(-1, "Can't write to audio output device.");
 
 		/* Cycle to the next buffer in the ring queue */
-		state->next_buffer = (state->next_buffer + 1) % NUM_BUFFERS;
+		state->next_buffer = (state->next_buffer + 1) % ao->numBuffers;
 	}
 	/* I'd like to propagate error codes or something... but there are no catchable surprises left.
 	   Anyhow: Here is the recursion that makes ravenexp happy;-) */
@@ -169,7 +169,7 @@ static void flush_win32(struct audio_output_struct *ao)
 	/* FIXME: The very last output buffer is not played. This could be a problem on the feeding side. */
 	i = 0;
 	z = state->next_buffer - 1;
-	for(i = 0; i < NUM_BUFFERS; i++)
+	for(i = 0; i < ao->numBuffers; i++)
 	{
 		if(!state->buffer_headers[i].dwFlags & WHDR_DONE)
 			WaitForSingleObject(state->play_done_event, INFINITE);
@@ -177,7 +177,7 @@ static void flush_win32(struct audio_output_struct *ao)
 		waveOutUnprepareHeader(state->waveout, &state->buffer_headers[i], sizeof(WAVEHDR));
 		state->buffer_headers[i].dwFlags = 0;
 		state->buffer_headers[i].dwBufferLength = 0;
-		z = (z + 1) % NUM_BUFFERS;
+		z = (z + 1) % ao->numBuffers;
 	}
 }
 
@@ -193,8 +193,9 @@ static int close_win32(struct audio_output_struct *ao)
 	waveOutClose(state->waveout);
 	CloseHandle(state->play_done_event);
 
-	for(i = 0; i < NUM_BUFFERS; i++) free(state->buffer_headers[i].lpData);
-
+	for(i = 0; i < ao->numBuffers; i++) free(state->buffer_headers[i].lpData);
+	free(state->buffer_headers);
+	
 	free(ao->userptr);
 	ao->userptr = 0;
 	return 0;
