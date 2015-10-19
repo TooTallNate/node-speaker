@@ -1,4 +1,12 @@
 
+0.2.6 / 2015-09-24
+==================
+
+  * more travis/appveyor testing
+  * src: modification so it works with nan@2 (#64, @santigimeno)
+  * fix compile with io.js 2.1.0 on Linux (#56, @bradjc)
+  * made it compile on freebsd (#55, @antxxxx)
+
 0.2.5 / 2015-04-15
 ==================
 

@@ -3,9 +3,7 @@
  * Helper functions for treating node Buffer instances as C "pointers".
  */
 
-#include "v8.h"
 #include "nan.h"
-#include "node_buffer.h"
 
 /*
  * Called when the "pointer" is garbage collected.
@@ -19,16 +17,16 @@ inline static void wrap_pointer_cb(char *data, void *hint) {
  * Wraps "ptr" into a new SlowBuffer instance with size "length".
  */
 
-inline static v8::Handle<v8::Value> WrapPointer(void *ptr, size_t length) {
+inline static v8::Local<v8::Value> WrapPointer(void *ptr, size_t length) {
   void *user_data = NULL;
-  return NanNewBufferHandle((char *)ptr, length, wrap_pointer_cb, user_data);
+  return Nan::NewBuffer((char *)ptr, length, wrap_pointer_cb, user_data).ToLocalChecked();
 }
 
 /*
  * Wraps "ptr" into a new SlowBuffer instance with length 0.
  */
 
-inline static v8::Handle<v8::Value> WrapPointer(void *ptr) {
+inline static v8::Local<v8::Value> WrapPointer(void *ptr) {
   return WrapPointer((char *)ptr, 0);
 }
 
@@ -36,7 +34,7 @@ inline static v8::Handle<v8::Value> WrapPointer(void *ptr) {
  * Unwraps Buffer instance "buffer" to a C `char *` with the offset specified.
  */
 
-inline static char * UnwrapPointer(v8::Handle<v8::Value> buffer, int64_t offset = 0) {
+inline static char * UnwrapPointer(v8::Local<v8::Value> buffer, int64_t offset = 0) {
   if (node::Buffer::HasInstance(buffer)) {
     return node::Buffer::Data(buffer.As<v8::Object>()) + offset;
   } else {
@@ -50,6 +48,6 @@ inline static char * UnwrapPointer(v8::Handle<v8::Value> buffer, int64_t offset 
  */
 
 template <typename Type>
-inline static Type UnwrapPointer(v8::Handle<v8::Value> buffer) {
+inline static Type UnwrapPointer(v8::Local<v8::Value> buffer) {
   return reinterpret_cast<Type>(UnwrapPointer(buffer));
 }

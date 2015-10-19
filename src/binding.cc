@@ -2,11 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "v8.h"
-#include "node.h"
-
 #include "node_pointer.h"
-#include "nan.h"
 #include "output.h"
 
 using namespace v8;
@@ -22,18 +18,18 @@ struct write_req {
   unsigned char *buffer;
   int len;
   int written;
-  NanCallback *callback;
+  Nan::Callback *callback;
 };
 
 NAN_METHOD(Open) {
-  NanEscapableScope();
+  Nan::EscapableHandleScope scope;
   int r;
-  audio_output_t *ao = UnwrapPointer<audio_output_t *>(args[0]);
+  audio_output_t *ao = UnwrapPointer<audio_output_t *>(info[0]);
   memset(ao, 0, sizeof(audio_output_t));
 
-  ao->channels = args[1]->Int32Value(); /* channels */
-  ao->rate = args[2]->Int32Value(); /* sample rate */
-  ao->format = args[3]->Int32Value(); /* MPG123_ENC_* format */
+  ao->channels = info[1]->Int32Value(); /* channels */
+  ao->rate = info[2]->Int32Value(); /* sample rate */
+  ao->format = info[3]->Int32Value(); /* MPG123_ENC_* format */
 
   /* init_output() */
   r = mpg123_output_module_info.init_output(ao);
@@ -42,30 +38,30 @@ NAN_METHOD(Open) {
     r = ao->open(ao);
   }
 
-  NanReturnValue(NanNew<v8::Integer>(r));
+  info.GetReturnValue().Set(scope.Escape(Nan::New<v8::Integer>(r)));
 }
 
 void write_async (uv_work_t *);
 void write_after (uv_work_t *);
 
 NAN_METHOD(Write) {
-  NanScope();
-  audio_output_t *ao = UnwrapPointer<audio_output_t *>(args[0]);
-  unsigned char *buffer = UnwrapPointer<unsigned char *>(args[1]);
-  int len = args[2]->Int32Value();
+  Nan::HandleScope scope;
+  audio_output_t *ao = UnwrapPointer<audio_output_t *>(info[0]);
+  unsigned char *buffer = UnwrapPointer<unsigned char *>(info[1]);
+  int len = info[2]->Int32Value();
 
   write_req *req = new write_req;
   req->ao = ao;
   req->buffer = buffer;
   req->len = len;
   req->written = 0;
-  req->callback = new NanCallback(args[3].As<Function>());
+  req->callback = new Nan::Callback(info[3].As<Function>());
 
   req->req.data = req;
 
   uv_queue_work(uv_default_loop(), &req->req, write_async, (uv_after_work_cb)write_after);
 
-  NanReturnUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 
 void write_async (uv_work_t *req) {
@@ -74,11 +70,11 @@ void write_async (uv_work_t *req) {
 }
 
 void write_after (uv_work_t *req) {
-  NanScope();
+  Nan::HandleScope scope;
   write_req *wreq = reinterpret_cast<write_req *>(req->data);
 
-  Handle<Value> argv[] = {
-    NanNew<v8::Integer>(wreq->written)
+  Local<Value> argv[] = {
+    Nan::New(wreq->written)
   };
 
   wreq->callback->Call(1, argv);
@@ -87,30 +83,38 @@ void write_after (uv_work_t *req) {
 }
 
 NAN_METHOD(Flush) {
-  NanScope();
-  audio_output_t *ao = UnwrapPointer<audio_output_t *>(args[0]);
+  Nan::HandleScope scope;
+  audio_output_t *ao = UnwrapPointer<audio_output_t *>(info[0]);
   /* TODO: async */
   ao->flush(ao);
-  NanReturnUndefined();
+  info.GetReturnValue().SetUndefined();
 }
 
 NAN_METHOD(Close) {
-  NanEscapableScope();
-  audio_output_t *ao = UnwrapPointer<audio_output_t *>(args[0]);
+  Nan::EscapableHandleScope scope;
+  audio_output_t *ao = UnwrapPointer<audio_output_t *>(info[0]);
   ao->close(ao);
   int r = 0;
   if (ao->deinit) {
     r = ao->deinit(ao);
   }
-  NanReturnValue(NanNew<v8::Integer>(r));
+  info.GetReturnValue().Set(scope.Escape(Nan::New<v8::Integer>(r)));
 }
 
 void Initialize(Handle<Object> target) {
-  NanScope();
-  target->ForceSet(NanNew<v8::String>("api_version"), NanNew<v8::Integer>(mpg123_output_module_info.api_version));
-  target->ForceSet(NanNew<v8::String>("name"), NanNew<v8::String>(mpg123_output_module_info.name));
-  target->ForceSet(NanNew<v8::String>("description"), NanNew<v8::String>(mpg123_output_module_info.description));
-  target->ForceSet(NanNew<v8::String>("revision"), NanNew<v8::String>(mpg123_output_module_info.revision));
+  Nan::HandleScope scope;
+  Nan::ForceSet(target,
+                Nan::New("api_version").ToLocalChecked(),
+                Nan::New(mpg123_output_module_info.api_version));
+  Nan::ForceSet(target,
+                Nan::New("name").ToLocalChecked(),
+                Nan::New(mpg123_output_module_info.name).ToLocalChecked());
+  Nan::ForceSet(target,
+                Nan::New("description").ToLocalChecked(),
+                Nan::New(mpg123_output_module_info.description).ToLocalChecked());
+  Nan::ForceSet(target,
+                Nan::New("revision").ToLocalChecked(),
+                Nan::New(mpg123_output_module_info.revision).ToLocalChecked());
 
   audio_output_t ao;
   memset(&ao, 0, sizeof(audio_output_t));
@@ -119,13 +123,14 @@ void Initialize(Handle<Object> target) {
   ao.rate = 44100;
   ao.format = MPG123_ENC_SIGNED_16;
   ao.open(&ao);
-  target->ForceSet(NanNew<v8::String>("formats"), NanNew<v8::Integer>(ao.get_formats(&ao)));
+  Nan::ForceSet(target, Nan::New("formats").ToLocalChecked(), Nan::New(ao.get_formats(&ao)));
   ao.close(&ao);
 
-  target->Set(NanNew<v8::String>("sizeof_audio_output_t"), NanNew<v8::Integer>(static_cast<uint32_t>(sizeof(audio_output_t))));
+  target->Set(Nan::New("sizeof_audio_output_t").ToLocalChecked(),
+              Nan::New(static_cast<uint32_t>(sizeof(audio_output_t))));
 
 #define CONST_INT(value) \
-  target->ForceSet(NanNew<v8::String>(#value), NanNew<v8::Integer>(value), \
+  Nan::ForceSet(target, Nan::New(#value).ToLocalChecked(), Nan::New(value), \
       static_cast<PropertyAttribute>(ReadOnly|DontDelete));
 
   CONST_INT(MPG123_ENC_FLOAT_32);
@@ -139,10 +144,10 @@ void Initialize(Handle<Object> target) {
   CONST_INT(MPG123_ENC_SIGNED_32);
   CONST_INT(MPG123_ENC_UNSIGNED_32);
 
-  NODE_SET_METHOD(target, "open", Open);
-  NODE_SET_METHOD(target, "write", Write);
-  NODE_SET_METHOD(target, "flush", Flush);
-  NODE_SET_METHOD(target, "close", Close);
+  Nan::SetMethod(target, "open", Open);
+  Nan::SetMethod(target, "write", Write);
+  Nan::SetMethod(target, "flush", Flush);
+  Nan::SetMethod(target, "close", Close);
 }
 
 } // anonymous namespace
