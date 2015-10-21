@@ -19,7 +19,7 @@
     "pulse",
     "mpg123"
   ],
-  "version": "0.2.5",
+  "version": "0.2.6",
   "author": "Nathan Rajlich <nathan@tootallnate.net> (http://tootallnate.net)",
   "repository": {
     "type": "git",
@@ -36,7 +36,7 @@
   "dependencies": {
     "bindings": "~1.2.1",
     "debug": "2",
-    "nan": "~1.7.0",
+    "nan": "2",
     "readable-stream": "1.0"
   },
   "devDependencies": {
