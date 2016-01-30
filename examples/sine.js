@@ -8,7 +8,7 @@ var Readable = require('stream').Readable;
 var Speaker = require('../');
 
 // node v0.8.x compat
-if (!Readable) Readable = require('readable-stream/readable');
+if (!Readable) Readable = require('stream').Readable;
 
 // the frequency to play
 var freq = parseFloat(process.argv[2], 10) || 440.0; // Concert A, default tone

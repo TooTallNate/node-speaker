@@ -7,7 +7,7 @@ var os = require('os');
 var debug = require('debug')('speaker');
 var binding = require('bindings')('binding');
 var inherits = require('util').inherits;
-var Writable = require('readable-stream/writable');
+var Writable = require('stream').Writable;
 
 // determine the native host endianness, the only supported playback endianness
 var endianness = 'function' == os.endianness ?
