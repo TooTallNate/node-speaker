@@ -1,4 +1,3 @@
-
 /**
  * Code adapted from:
  * http://blogs.msdn.com/b/dawate/archive/2009/06/24/intro-to-audio-programming-part-3-synthesizing-simple-wave-audio-using-c.aspx
@@ -30,32 +29,32 @@ sine._read = read;
 sine.pipe(new Speaker());
 
 // the Readable "_read()" callback function
-function read (n) {
-  var sampleSize = this.bitDepth / 8;
-  var blockAlign = sampleSize * this.channels;
-  var numSamples = n / blockAlign | 0;
-  var buf = new Buffer(numSamples * blockAlign);
-  var amplitude = 32760; // Max amplitude for 16-bit audio
+function read(n) {
+	var sampleSize = this.bitDepth / 8;
+	var blockAlign = sampleSize * this.channels;
+	var numSamples = n / blockAlign | 0;
+	var buf = new Buffer(numSamples * blockAlign);
+	var amplitude = 32760; // Max amplitude for 16-bit audio
 
-  // the "angle" used in the function, adjusted for the number of
-  // channels and sample rate. This value is like the period of the wave.
-  var t = (Math.PI * 2 * freq) / this.sampleRate;
+	// the "angle" used in the function, adjusted for the number of
+	// channels and sample rate. This value is like the period of the wave.
+	var t = (Math.PI * 2 * freq) / this.sampleRate;
 
-  for (var i = 0; i < numSamples; i++) {
-    // fill with a simple sine wave at max amplitude
-    for (var channel = 0; channel < this.channels; channel++) {
-      var s = this.samplesGenerated + i;
-      var val = Math.round(amplitude * Math.sin(t * s)); // sine wave
-      var offset = (i * sampleSize * this.channels) + (channel * sampleSize);
-      buf['writeInt' + this.bitDepth + 'LE'](val, offset);
-    }
-  }
+	for (var i = 0; i < numSamples; i++) {
+		// fill with a simple sine wave at max amplitude
+		for (var channel = 0; channel < this.channels; channel++) {
+			var s = this.samplesGenerated + i;
+			var val = Math.round(amplitude * Math.sin(t * s)); // sine wave
+			var offset = (i * sampleSize * this.channels) + (channel * sampleSize);
+			buf['writeInt' + this.bitDepth + 'LE'](val, offset);
+		}
+	}
 
-  this.push(buf);
+	this.push(buf);
 
-  this.samplesGenerated += numSamples;
-  if (this.samplesGenerated >= this.sampleRate * duration) {
-    // after generating "duration" second of audio, emit "end"
-    this.push(null);
-  }
+	this.samplesGenerated += numSamples;
+	if (this.samplesGenerated >= this.sampleRate * duration) {
+		// after generating "duration" second of audio, emit "end"
+		this.push(null);
+	}
 }

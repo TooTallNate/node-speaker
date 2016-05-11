@@ -185,7 +185,7 @@ static int write_win32(struct audio_output_struct *ao, unsigned char *buf, int l
        Anyhow: Here is the recursion that makes ravenexp happy;-) */
     if(rest_len && write_win32(ao, buf + bufill, rest_len) < 0) /* Write the rest. */
     return -1;
-    else    
+    else
     return len;
 }
 
@@ -264,7 +264,7 @@ static int close_win32(struct audio_output_struct *ao)
     drain_win32(ao);
     CloseHandle(state->play_done_event);
 
-    for(i = 0; i < NUM_BUFFERS; i++) 
+    for(i = 0; i < NUM_BUFFERS; i++)
     {
         state->buffer_headers[i].dwFlags |= WHDR_PREPARED;
         waveOutUnprepareHeader(state->waveout, &state->buffer_headers[i], sizeof(WAVEHDR));
@@ -292,15 +292,15 @@ static int init_win32(audio_output_t* ao)
     return 0;
 }
 
-/* 
+/*
     Module information data structure
 */
 mpg123_module_t mpg123_output_module_info = {
     /* api_version */    MPG123_MODULE_API_VERSION,
-    /* name */            "win32",                        
+    /* name */            "win32",
     /* description */    "Audio output for Windows (winmm).",
-    /* revision */        "$Rev:$",                        
+    /* revision */        "$Rev:$",
     /* handle */        NULL,
-    
-    /* init_output */    init_win32,                        
+
+    /* init_output */    init_win32,
 };
