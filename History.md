@@ -1,4 +1,10 @@
 
+0.3.0 / 2016-04-09
+==================
+
+  * Update to latest version win32.c
+  * README: use SVG for appveyor badge
+
 0.2.6 / 2015-09-24
 ==================
 
