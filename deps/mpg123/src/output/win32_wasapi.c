@@ -39,7 +39,7 @@ mpg123_module_t mpg123_output_module_info = {
 	/* revision */		"$Rev:$",
 	/* handle */		NULL,
 
-	/* init_output */	init_win32,
+	/* init_output */	init_win32
 };
 
 // REFERENCE_TIME time units per second and per millisecond

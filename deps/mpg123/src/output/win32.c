@@ -58,9 +58,20 @@ static int open_win32(struct audio_output_struct *ao)
 	if (state->play_done_event == INVALID_HANDLE_VALUE) return -1;
 
 	/* FIXME: real device enumeration by capabilities? */
-	dev_id = WAVE_MAPPER;                             /* probably does the same thing */
+	dev_id = WAVE_MAPPER; // probably does the same thing
 	ao->device = "WaveMapper";
-	/* Now supports MPG123_ENC_UNSIGNED_8, MPG123_ENC_SIGNED_8, MPG123_ENC_SIGNED_16, MPG123_ENC_UNSIGNED_16, MPG123_ENC_SIGNED_24, MPG123_ENC_UNSIGNED_24, MPG123_ENC_SIGNED_32, MPG123_ENC_UNSIGNED_32, MPG123_ENC_FLOAT_32 and even MPG123_ENC_FLOAT_64 -- Mathijs van Velde [GitHub](https://github.com/MathijsvVelde) */
+	/** Now supports:
+	 *  - MPG123_ENC_UNSIGNED_8
+	 *  - MPG123_ENC_SIGNED_8
+	 *  - MPG123_ENC_SIGNED_16
+	 *  - MPG123_ENC_UNSIGNED_16
+	 *  - MPG123_ENC_SIGNED_24
+	 *  - MPG123_ENC_UNSIGNED_24
+	 *  - MPG123_ENC_SIGNED_32
+	 *  - MPG123_ENC_UNSIGNED_32
+	 *  - MPG123_ENC_FLOAT_32
+	 *  By: Mathijs van Velde [GitHub](https://github.com/MathijsvVelde)
+	 */
 
 	switch (ao->format)
 	{
@@ -92,8 +103,8 @@ static int open_win32(struct audio_output_struct *ao)
 
 	out_fmt.nChannels = ao->channels;
 	out_fmt.nSamplesPerSec = ao->rate;
-	out_fmt.nBlockAlign = out_fmt.nChannels*out_fmt.wBitsPerSample / 8;
-	out_fmt.nAvgBytesPerSec = out_fmt.nBlockAlign*out_fmt.nSamplesPerSec;
+	out_fmt.nBlockAlign = out_fmt.nChannels * out_fmt.wBitsPerSample / 8;
+	out_fmt.nAvgBytesPerSec = out_fmt.nBlockAlign * out_fmt.nSamplesPerSec;
 	out_fmt.cbSize = 0;
 
 	res = waveOutOpen(&state->waveout, dev_id, &out_fmt,
@@ -192,8 +203,8 @@ static int write_win32(struct audio_output_struct *ao, unsigned char *buf, int l
 	MMRESULT res;
 	WAVEHDR* hdr;
 
-	int rest_len;                             /* Input data bytes left for next recursion. */
-	int bufill;                             /* Bytes we stuff into buffer now. */
+	int rest_len; // Input data bytes left for next recursion.
+	int bufill;   // Bytes we stuff into buffer now.
 
 	if (!ao || !ao->userptr) return -1;
 	if (!buf || len <= 0) return 0;
@@ -211,7 +222,8 @@ static int write_win32(struct audio_output_struct *ao, unsigned char *buf, int l
 	memcpy(hdr->lpData + hdr->dwBufferLength, buf, bufill);
 	hdr->dwBufferLength += bufill;
 	if (hdr->dwBufferLength == BUFFER_SIZE)
-	{                             /* Send the buffer out when it's full. */
+	{
+		/* Send the buffer out when it's full. */
 		hdr->dwFlags |= WHDR_PREPARED;
 
 		res = waveOutWrite(state->waveout, hdr, sizeof(WAVEHDR));
@@ -222,7 +234,8 @@ static int write_win32(struct audio_output_struct *ao, unsigned char *buf, int l
 	}
 	/* I'd like to propagate error codes or something... but there are no catchable surprises left.
 	   Anyhow: Here is the recursion that makes ravenexp happy;-) */
-	if (rest_len && write_win32(ao, buf + bufill, rest_len) < 0)                             /* Write the rest. */
+	if (rest_len && write_win32(ao, buf + bufill, rest_len) < 0)
+		/* Write the rest. */
 		return -1;
 	else
 		return len;
@@ -293,7 +306,6 @@ static void drain_win32(struct audio_output_struct *ao)
 
 static int close_win32(struct audio_output_struct *ao)
 {
-
 	int i;
 	struct queue_state* state;
 
