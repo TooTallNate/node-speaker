@@ -49,8 +49,6 @@ function read(n) {
     var buf = new Buffer(numSamples * blockAlign);
     var amplitude = 32767; // Max amplitude for 16-bit audio (0x7FFF)
 
-    console.log(blockAlign, n);
-
     // the "angle" used in the function, adjusted for the number of
     // channels and sample rate. This value is like the period of the wave.
     var t = (Math.PI * 2 * freq) / opts.sampleRate;
@@ -61,11 +59,9 @@ function read(n) {
             var s = samplesGenerated + i;
             var val = Math.round(amplitude * Math.sin(t * s)); // sine wave
             var offset = (i * sampleSize * opts.channels) + (channel * sampleSize);
-            buf['writeInt' + opts.bitDepth + 'LE'](val, offset);
+            buf.writeInt16LE(val, offset);
         }
     }
-
-    console.log(buf);
 
     this.push(buf);
 

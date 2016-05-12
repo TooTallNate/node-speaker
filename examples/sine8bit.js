@@ -49,8 +49,6 @@ function read(n) {
     var buf = new Buffer(numSamples * blockAlign);
     var amplitude = 127; // Max amplitude for 8-bit audio (0x7F)
 
-    console.log(blockAlign, n);
-
     // the "angle" used in the function, adjusted for the number of
     // channels and sample rate. This value is like the period of the wave.
     var t = (Math.PI * 2 * freq) / opts.sampleRate;
@@ -64,8 +62,6 @@ function read(n) {
             buf.writeInt8(val, offset);
         }
     }
-
-    console.log(buf);
 
     this.push(buf);
 
