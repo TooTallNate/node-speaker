@@ -227,6 +227,13 @@
             ],
           }
         }],
+        ['mpg123_backend=="jack"', {
+          'link_settings': {
+            'libraries': [
+              '-ljack',
+            ],
+          }
+        }],
       ],
       'sources': [ 'src/output/<(mpg123_backend).c' ],
     },
