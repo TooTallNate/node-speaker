@@ -24,12 +24,21 @@ struct write_req {
 NAN_METHOD(Open) {
   Nan::EscapableHandleScope scope;
   int r;
+  char* device_argument;
+  v8::Local<v8::String> device_param;
+
   audio_output_t *ao = UnwrapPointer<audio_output_t *>(info[0]);
   memset(ao, 0, sizeof(audio_output_t));
 
   ao->channels = info[1]->Int32Value(); /* channels */
   ao->rate = info[2]->Int32Value(); /* sample rate */
   ao->format = info[3]->Int32Value(); /* MPG123_ENC_* format */
+
+  if (!info[4]->IsUndefined()) {
+    v8::String::Utf8Value device_param(info[4]->ToString());
+    device_argument = const_cast<char*> ( std::string(*device_param).c_str() );
+    ao->device = device_argument;
+  }
 
   /* init_output() */
   r = mpg123_output_module_info.init_output(ao);
