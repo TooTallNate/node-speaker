@@ -29,17 +29,17 @@
 
 static int init_win32(audio_output_t* ao);
 static void flush_win32(struct audio_output_struct *ao);
-/* 
+/*
 	Module information data structure
 */
 mpg123_module_t mpg123_output_module_info = {
 	/* api_version */	MPG123_MODULE_API_VERSION,
-	/* name */			"win32_wasapi",						
+	/* name */			"win32_wasapi",
 	/* description */	MOD_STRING,
-	/* revision */		"$Rev:$",						
+	/* revision */		"$Rev:$",
 	/* handle */		NULL,
-	
-	/* init_output */	init_win32,
+
+	/* init_output */	init_win32
 };
 
 // REFERENCE_TIME time units per second and per millisecond
@@ -436,7 +436,7 @@ static int close_win32(struct audio_output_struct *ao)
   }
 #endif
   if(state->pAudioClient) IAudioClient_Stop(state->pAudioClient);
-  if(state->pRenderClient) IAudioRenderClient_Release(state->pRenderClient);  
+  if(state->pRenderClient) IAudioRenderClient_Release(state->pRenderClient);
   if(state->pAudioClient) IAudioClient_Release(state->pAudioClient);
   if(state->hTask) AvRevertMmThreadCharacteristics(state->hTask);
   if(state->pEnumerator) IMMDeviceEnumerator_Release(state->pEnumerator);

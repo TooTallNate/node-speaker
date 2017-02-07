@@ -4,3 +4,4 @@
 # dev files
 /?.js
 /*.mp3
+.tag*
