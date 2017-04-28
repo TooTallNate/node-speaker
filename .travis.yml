@@ -8,7 +8,7 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - g++-4.8
-      - libasound2-dev
+      - libao-dev
 
 language: node_js
 
@@ -17,11 +17,15 @@ node_js:
   - "6"
   - "7"
   - "8"
+  - "9"
 
 install:
   - PATH="`npm bin`:`npm bin -g`:$PATH"
   # Install dependencies and build
   - npm install
+
+before_script:
+  - "echo 'default_driver=null' | sudo tee /etc/libao.conf"
 
 script:
   # Output useful info for debugging
