@@ -11,7 +11,7 @@
 
 #include "mpg123app.h"
 
-#include <CoreServices/CoreServices.h>
+#include <AudioUnit/AudioComponent.h>
 #include <AudioUnit/AudioUnit.h>
 #include <AudioToolbox/AudioToolbox.h>
 #include <errno.h>
@@ -36,11 +36,11 @@ typedef struct mpg123_coreaudio
 	int last_buffer;
 	int play_done;
 	int decode_done;
-	
+
 	/* Convertion buffer */
 	unsigned char * buffer;
 	size_t buffer_size;
-	
+
 	/* Ring buffer */
 	sfifo_t fifo;
 
@@ -56,13 +56,13 @@ static OSStatus playProc(AudioConverterRef inAudioConverter,
 {
 	mpg123_coreaudio_t *ca = (mpg123_coreaudio_t *)inClientData;
 	long n;
-	
-	
+
+
 	if(ca->last_buffer) {
 		ca->play_done = 1;
 		return noErr;
 	}
-	
+
 	for(n = 0; n < outOutputData->mNumberBuffers; n++)
 	{
 		unsigned int wanted = *ioNumberDataPackets * ca->channels * ca->bps;
@@ -74,7 +74,7 @@ static OSStatus playProc(AudioConverterRef inAudioConverter,
 			ca->buffer_size = wanted;
 		}
 		dest = ca->buffer;
-		
+
 		/* Only play if we have data left */
 		if ( sfifo_used( &ca->fifo ) < (int)wanted ) {
 			if(!ca->decode_done) {
@@ -84,18 +84,18 @@ static OSStatus playProc(AudioConverterRef inAudioConverter,
 			wanted = sfifo_used( &ca->fifo );
 			ca->last_buffer = 1;
 		}
-		
+
 		/* Read audio from FIFO to SDL's buffer */
 		read = sfifo_read( &ca->fifo, dest, wanted );
-		
+
 		if (wanted!=read)
 			warning2("Error reading from the ring buffer (wanted=%u, read=%u).\n", wanted, read);
-		
+
 		outOutputData->mBuffers[n].mDataByteSize = read;
 		outOutputData->mBuffers[n].mData = dest;
 	}
-	
-	return noErr; 
+
+	return noErr;
 }
 
 static OSStatus convertProc(void *inRefCon, AudioUnitRenderActionFlags *inActionFlags,
@@ -105,9 +105,9 @@ static OSStatus convertProc(void *inRefCon, AudioUnitRenderActionFlags *inAction
 	AudioStreamPacketDescription* outPacketDescription = NULL;
 	mpg123_coreaudio_t* ca = (mpg123_coreaudio_t*)inRefCon;
 	OSStatus err= noErr;
-	
+
 	err = AudioConverterFillComplexBuffer(ca->converter, playProc, inRefCon, &inNumFrames, ioData, outPacketDescription);
-	
+
 	return err;
 }
 
@@ -115,13 +115,13 @@ static int open_coreaudio(audio_output_t *ao)
 {
 	mpg123_coreaudio_t* ca = (mpg123_coreaudio_t*)ao->userptr;
 	UInt32 size;
-	ComponentDescription desc;
-	Component comp;
+	AudioComponentDescription desc;
+	AudioComponent comp;
 	AudioStreamBasicDescription inFormat;
 	AudioStreamBasicDescription outFormat;
 	AURenderCallbackStruct  renderCallback;
 	Boolean outWritable;
-	
+
 	/* Initialize our environment */
 	ca->play = 0;
 	ca->buffer = NULL;
@@ -130,41 +130,41 @@ static int open_coreaudio(audio_output_t *ao)
 	ca->play_done = 0;
 	ca->decode_done = 0;
 
-	
+
 	/* Get the default audio output unit */
-	desc.componentType = kAudioUnitType_Output; 
+	desc.componentType = kAudioUnitType_Output;
 	desc.componentSubType = kAudioUnitSubType_DefaultOutput;
 	desc.componentManufacturer = kAudioUnitManufacturer_Apple;
 	desc.componentFlags = 0;
 	desc.componentFlagsMask = 0;
-	comp = FindNextComponent(NULL, &desc);
+	comp = AudioComponentFindNext(NULL, &desc);
 	if(comp == NULL) {
 		error("FindNextComponent failed");
 		return(-1);
 	}
-	
-	if(OpenAComponent(comp, &(ca->outputUnit)))  {
+
+	if(AudioComponentInstanceNew(comp, &(ca->outputUnit)))  {
 		error("OpenAComponent failed");
 		return (-1);
 	}
-	
+
 	if(AudioUnitInitialize(ca->outputUnit)) {
 		error("AudioUnitInitialize failed");
 		return (-1);
 	}
-	
+
 	/* Specify the output PCM format */
 	AudioUnitGetPropertyInfo(ca->outputUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, 0, &size, &outWritable);
 	if(AudioUnitGetProperty(ca->outputUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, 0, &outFormat, &size)) {
 		error("AudioUnitGetProperty(kAudioUnitProperty_StreamFormat) failed");
 		return (-1);
 	}
-	
+
 	if(AudioUnitSetProperty(ca->outputUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &outFormat, size)) {
 		error("AudioUnitSetProperty(kAudioUnitProperty_StreamFormat) failed");
 		return (-1);
 	}
-	
+
 	/* Specify the input PCM format */
 	ca->channels = ao->channels;
 	inFormat.mSampleRate = ao->rate;
@@ -175,7 +175,7 @@ static int open_coreaudio(audio_output_t *ao)
 #else
 	inFormat.mFormatFlags = kLinearPCMFormatFlagIsPacked;
 #endif
-	
+
 	switch(ao->format)
 	{
 		case MPG123_ENC_SIGNED_16:
@@ -202,12 +202,12 @@ static int open_coreaudio(audio_output_t *ao)
 			ca->bps = 4;
 			break;
 	}
-	
+
 	inFormat.mBitsPerChannel = ca->bps << 3;
 	inFormat.mBytesPerPacket = ca->bps*inFormat.mChannelsPerFrame;
 	inFormat.mFramesPerPacket = 1;
 	inFormat.mBytesPerFrame = ca->bps*inFormat.mChannelsPerFrame;
-	
+
 	/* Add our callback - but don't start it yet */
 	memset(&renderCallback, 0, sizeof(AURenderCallbackStruct));
 	renderCallback.inputProc = convertProc;
@@ -216,8 +216,8 @@ static int open_coreaudio(audio_output_t *ao)
 		error("AudioUnitSetProperty(kAudioUnitProperty_SetRenderCallback) failed");
 		return(-1);
 	}
-	
-	
+
+
 	/* Open an audio I/O stream and create converter */
 	if (ao->rate > 0 && ao->channels >0 ) {
 		int ringbuffer_len;
@@ -233,13 +233,13 @@ static int open_coreaudio(audio_output_t *ao)
 				return(-1);
 			}
 		}
-		
+
 		/* Initialise FIFO */
 		ringbuffer_len = ao->rate * FIFO_DURATION * ca->bps * ao->channels;
 		debug2( "Allocating %d byte ring-buffer (%f seconds)", ringbuffer_len, (float)FIFO_DURATION);
 		sfifo_init( &ca->fifo, ringbuffer_len );
 	}
-	
+
 	return(0);
 }
 
@@ -257,14 +257,14 @@ static int write_coreaudio(audio_output_t *ao, unsigned char *buf, int len)
 	while (sfifo_space( &ca->fifo ) < len ) {
 		usleep( (FIFO_DURATION/2) * 1000000 );
 	}
-	
+
 	/* Store converted audio in ring buffer */
 	written = sfifo_write( &ca->fifo, (char*)buf, len);
 	if (written != len) {
 		warning( "Failed to write audio to ring buffer" );
 		return -1;
 	}
-	
+
 	/* Start playback now that we have something to play */
 	if(!ca->play)
 	{
@@ -274,7 +274,7 @@ static int write_coreaudio(audio_output_t *ao, unsigned char *buf, int len)
 		}
 		ca->play = 1;
 	}
-	
+
 	return len;
 }
 
@@ -285,24 +285,24 @@ static int close_coreaudio(audio_output_t *ao)
 	if (ca) {
 		ca->decode_done = 1;
 		while(!ca->play_done && ca->play) usleep(10000);
-		
+
 		/* No matter the error code, we want to close it (by brute force if necessary) */
 		AudioConverterDispose(ca->converter);
 		AudioOutputUnitStop(ca->outputUnit);
 		AudioUnitUninitialize(ca->outputUnit);
-		CloseComponent(ca->outputUnit);
-	
+		AudioComponentInstanceDispose(ca->outputUnit);
+
 	    /* Free the ring buffer */
 		sfifo_close( &ca->fifo );
-		
+
 		/* Free the conversion buffer */
 		if (ca->buffer) {
 			free( ca->buffer );
 			ca->buffer = NULL;
 		}
-		
+
 	}
-	
+
 	return 0;
 }
 
@@ -315,9 +315,9 @@ static void flush_coreaudio(audio_output_t *ao)
 		error("AudioOutputUnitStop failed");
 	}
 	ca->play=0;
-	
+
 	/* Empty out the ring buffer */
-	sfifo_flush( &ca->fifo );	
+	sfifo_flush( &ca->fifo );
 }
 
 static int deinit_coreaudio(audio_output_t* ao)
@@ -358,17 +358,15 @@ static int init_coreaudio(audio_output_t* ao)
 
 
 
-/* 
+/*
 	Module information data structure
 */
 mpg123_module_t mpg123_output_module_info = {
 	/* api_version */	MPG123_MODULE_API_VERSION,
-	/* name */			"coreaudio",						
+	/* name */			"coreaudio",
 	/* description */	"Output audio using Mac OS X's CoreAudio.",
 	/* revision */		"$Rev:$",
 	/* handle */		NULL,
-	
-	/* init_output */	init_coreaudio,						
+
+	/* init_output */	init_coreaudio,
 };
-
-
