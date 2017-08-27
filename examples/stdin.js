@@ -1,9 +1,10 @@
+'use strict'
 
 /**
  * Pipe data to stdin and it will be played through your speakers.
  */
 
-var Speaker = require('../');
+const Speaker = require('../')
 
-var speaker = new Speaker();
-process.stdin.pipe(speaker);
+const speaker = new Speaker()
+process.stdin.pipe(speaker)

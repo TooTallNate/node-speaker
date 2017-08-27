@@ -32,15 +32,20 @@
   "homepage": "https://github.com/TooTallNate/node-speaker",
   "main": "./index.js",
   "scripts": {
-    "test": "node-gyp rebuild --mpg123-backend=dummy && mocha --reporter spec"
+    "test": "standard && node-gyp rebuild --mpg123-backend=dummy && mocha --reporter spec"
   },
   "dependencies": {
     "bindings": "^1.2.1",
+    "buffer-alloc": "^1.1.0",
     "debug": "^2.2.0",
     "nan": "^2.2.0",
     "readable-stream": "^2.0.5"
   },
   "devDependencies": {
-    "mocha": "^2.1.0"
+    "mocha": "^2.1.0",
+    "standard": "^10.0.3"
+  },
+  "engines": {
+    "node": ">4"
   }
 }
