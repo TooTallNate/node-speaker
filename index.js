@@ -147,6 +147,10 @@ Speaker.prototype._open = function () {
     debug('setting default %o: %o', 'signed', this.bitDepth != 8);
     this.signed = this.bitDepth != 8;
   }
+  if (null == this.device) {
+    debug('setting default %o: %o', 'device', undefined);
+    this.device = undefined;
+  }
 
   var format = exports.getFormat(this);
   if (null == format) {
@@ -163,7 +167,7 @@ Speaker.prototype._open = function () {
   // initialize the audio handle
   // TODO: open async?
   this.audio_handle = new Buffer(binding.sizeof_audio_output_t);
-  var r = binding.open(this.audio_handle, this.channels, this.sampleRate, format);
+  var r = binding.open(this.audio_handle, this.channels, this.sampleRate, format, this.device);
   if (0 !== r) {
     throw new Error('open() failed: ' + r);
   }
@@ -206,6 +210,10 @@ Speaker.prototype._format = function (opts) {
   if (null != opts.samplesPerFrame) {
     debug('setting %o: %o', "samplesPerFrame", opts.samplesPerFrame);
     this.samplesPerFrame = opts.samplesPerFrame;
+  }
+  if (null != opts.device) {
+    debug('setting %o: %o', "device", opts.device);
+    this.device = opts.device;
   }
   if (null == opts.endianness || endianness == opts.endianness) {
     // no "endianness" specified or explicit native endianness
