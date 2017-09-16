@@ -81,6 +81,13 @@ class Speaker extends Writable {
       debug('setting default %o: %o', 'signed', this.bitDepth !== 8)
       this.signed = this.bitDepth !== 8
     }
+		console.log('this.device: ', this.device);
+		if (this.device == null) {
+      debug('setting default %o: %o', 'device', 'default');
+      this.device = 'default';
+    }
+		
+		console.log('this.device: ', this.device);
 
     const format = Speaker.getFormat(this)
     if (format == null) {
@@ -97,7 +104,7 @@ class Speaker extends Writable {
     // initialize the audio handle
     // TODO: open async?
     this.audio_handle = bufferAlloc(binding.sizeof_audio_output_t)
-    const r = binding.open(this.audio_handle, this.channels, this.sampleRate, format)
+    const r = binding.open(this.audio_handle, this.channels, this.sampleRate, format, this.device)
     if (r !== 0) {
       throw new Error(`open() failed: ${r}`)
     }
@@ -136,6 +143,10 @@ class Speaker extends Writable {
     if (opts.signed != null) {
       debug('setting %o: %o', 'signed', opts.signed)
       this.signed = opts.signed
+    }
+		if (opts.device != null) {
+      debug('setting %o: %o', 'device', opts.device)
+      this.device = opts.device
     }
     if (opts.samplesPerFrame != null) {
       debug('setting %o: %o', 'samplesPerFrame', opts.samplesPerFrame)
