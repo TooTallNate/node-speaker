@@ -74,7 +74,7 @@ void write_async (uv_work_t *req) {
 }
 
 void write_after (uv_work_t *req) {
-  Nan::HandleScope scope;
+  Nan::HandleScope scope; 
   write_req *wreq = reinterpret_cast<write_req *>(req->data);
 
   Local<Value> argv[] = {
