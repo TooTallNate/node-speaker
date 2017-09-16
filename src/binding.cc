@@ -30,6 +30,10 @@ NAN_METHOD(Open) {
   ao->channels = info[1]->Int32Value(); /* channels */
   ao->rate = info[2]->Int32Value(); /* sample rate */
   ao->format = info[3]->Int32Value(); /* MPG123_ENC_* format */
+	// ao->device = (char*)"bluealsa:HCI=hci0,DEV=00:6A:8E:16:C5:F2,PROFILE=sco"; /* device */
+	// Thank god for https://stackoverflow.com/a/30929476 .
+	String::Utf8Value str(info[4]->ToString());
+	ao->device = (char*)*str;
 
   /* init_output() */
   r = mpg123_output_module_info.init_output(ao);
