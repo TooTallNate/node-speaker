@@ -81,13 +81,10 @@ class Speaker extends Writable {
       debug('setting default %o: %o', 'signed', this.bitDepth !== 8)
       this.signed = this.bitDepth !== 8
     }
-		console.log('this.device: ', this.device);
 		if (this.device == null) {
       debug('setting default %o: %o', 'device', 'default');
       this.device = 'default';
     }
-		
-		console.log('this.device: ', this.device);
 
     const format = Speaker.getFormat(this)
     if (format == null) {
