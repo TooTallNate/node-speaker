@@ -200,10 +200,12 @@ class Speaker extends Writable {
       debug('wrote %o bytes', r)
       if (r !== b.length) {
         done(new Error(`write() failed: ${r}`))
-      } else if (left) {
+      }
+			else if (left) {
         debug('still %o bytes left in this chunk', left.length)
         write()
-      } else {
+      }
+			else {
         debug('done with this chunk')
         done()
       }
@@ -247,9 +249,9 @@ class Speaker extends Writable {
    */
 
   _flush () {
-    debug('_flush()')
-    this.emit('flush')
-    this.close(false)
+		debug('_flush()')
+		this.emit('flush')
+		this.close(false)
   }
 
   /**
@@ -261,27 +263,29 @@ class Speaker extends Writable {
    * @api public
    */
 
-  close (flush) {
+	close (flush) {
+		var that = this;
     debug('close(%o)', flush)
-    if (this._closed) return debug('already closed...')
+    if (that._closed) return debug('already closed...')
+		setTimeout(function() {
+			if (that.audio_handle) {
+				if (flush !== false) {
+					// TODO: async most likely…
+					debug('invoking flush() native binding')
+					binding.flush(that.audio_handle)
+				}
 
-    if (this.audio_handle) {
-      if (flush !== false) {
-        // TODO: async most likely…
-        debug('invoking flush() native binding')
-        binding.flush(this.audio_handle)
-      }
-
-      // TODO: async maybe?
-      debug('invoking close() native binding')
-      binding.close(this.audio_handle)
-      this.audio_handle = null
-    } else {
-      debug('not invoking flush() or close() bindings since no `audio_handle`')
-    }
-
-    this._closed = true
-    this.emit('close')
+				// TODO: async maybe?
+				debug('invoking close() native binding')
+				binding.close(that.audio_handle)
+				that.audio_handle = null
+			}
+			else {
+				debug('not invoking flush() or close() bindings since no `audio_handle`')
+			}
+			that._closed = true
+			that.emit('close')
+		}, 600);
   }
 }
 
