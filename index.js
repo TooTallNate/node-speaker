@@ -275,25 +275,23 @@ class Speaker extends Writable {
 		var that = this;
     debug('close(%o)', flush)
     if (that._closed) return debug('already closed...')
-		setTimeout(function() {
-			if (that.audio_handle) {
-				if (flush !== false) {
-					// TODO: async most likely…
-					debug('invoking flush() native binding')
-					binding.flush(that.audio_handle)
-				}
+		if (that.audio_handle) {
+			if (flush !== false) {
+				// TODO: async most likely…
+				debug('invoking flush() native binding')
+				binding.flush(that.audio_handle)
+			}
 
-				// TODO: async maybe?
-				debug('invoking close() native binding')
-				binding.close(that.audio_handle)
-				that.audio_handle = null
-			}
-			else {
-				debug('not invoking flush() or close() bindings since no `audio_handle`')
-			}
-			that._closed = true
-			that.emit('close')
-		}, 600);
+			// TODO: async maybe?
+			debug('invoking close() native binding')
+			binding.close(that.audio_handle)
+			that.audio_handle = null
+		}
+		else {
+			debug('not invoking flush() or close() bindings since no `audio_handle`')
+		}
+		that._closed = true
+		that.emit('close')
   }
 }
 
