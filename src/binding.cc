@@ -31,6 +31,12 @@ NAN_METHOD(Open) {
   ao->rate = info[2]->Int32Value(); /* sample rate */
   ao->format = info[3]->Int32Value(); /* MPG123_ENC_* format */
 
+  if (info[4]->IsString()) {
+    v8::Local<v8::String> deviceString = info[4]->ToString();
+    ao->device = new char[deviceString->Length() + 1];
+    deviceString->WriteOneByte(reinterpret_cast<uint8_t *>(ao->device));
+  }
+
   /* init_output() */
   r = mpg123_output_module_info.init_output(ao);
   if (r == 0) {
@@ -98,6 +104,7 @@ NAN_METHOD(Close) {
   if (ao->deinit) {
     r = ao->deinit(ao);
   }
+  delete ao->device;
   info.GetReturnValue().Set(scope.Escape(Nan::New<v8::Integer>(r)));
 }
 
