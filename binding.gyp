@@ -9,7 +9,7 @@
         '<!(node -e "require(\'nan\')")'
       ],
       'dependencies': [
-        'deps/mpg123/mpg123.gyp:output'
+        'deps/libout123/libout123.gyp:output'
       ],
     }
   ]

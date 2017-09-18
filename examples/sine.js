@@ -26,7 +26,7 @@ sine.samplesGenerated = 0
 sine._read = read
 
 // create a SineWaveGenerator instance and pipe it to the speaker
-sine.pipe(new Speaker())
+sine.pipe(new Speaker({ device: 'Internal Speakers' }))
 
 // the Readable "_read()" callback function
 function read (n) {

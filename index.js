@@ -100,7 +100,7 @@ class Speaker extends Writable {
 
     // initialize the audio handle
     // TODO: open async?
-    this.audio_handle = bufferAlloc(binding.sizeof_audio_output_t)
+    this.audio_handle = bufferAlloc(binding.sizeof_out123_handle)
     const r = binding.open(this.audio_handle, this.channels, this.sampleRate, format, this.device)
     if (r !== 0) {
       throw new Error(`open() failed: ${r}`)
