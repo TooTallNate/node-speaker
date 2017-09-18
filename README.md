@@ -1,5 +1,7 @@
 # node-speaker
 
+Forked. Allows setting an ALSA output device (in case you use the ALSA output backend, which is the default on Linux).
+
 ## Output [PCM audio][pcm] data to the speakers
 
 [![Build Status](https://secure.travis-ci.org/TooTallNate/node-speaker.svg)](https://travis-ci.org/TooTallNate/node-speaker)
@@ -37,7 +39,8 @@ const Speaker = require('speaker');
 const speaker = new Speaker({
   channels: 2,          // 2 channels
   bitDepth: 16,         // 16-bit samples
-  sampleRate: 44100     // 44,100 Hz sample rate
+  sampleRate: 44100,     // 44,100 Hz sample rate
+  device: 'some-device-string' // The ALSA device to output to.
 });
 
 // PCM data from stdin gets piped into the speaker
