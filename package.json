@@ -1,6 +1,27 @@
 {
   "name": "speaker",
+  "version": "0.4.1",
+  "license": "MIT",
   "description": "Output PCM audio data to the speakers",
+  "author": "Nathan Rajlich <nathan@tootallnate.net> (http://tootallnate.net)",
+  "repository": "TooTallNate/node-speaker",
+  "scripts": {
+    "test": "standard && node-gyp rebuild --mpg123-backend=dummy && mocha --reporter spec"
+  },
+  "dependencies": {
+    "bindings": "^1.3.0",
+    "buffer-alloc": "^1.1.0",
+    "debug": "^3.0.1",
+    "nan": "^2.6.2",
+    "readable-stream": "^2.3.3"
+  },
+  "devDependencies": {
+    "mocha": "^3.5.0",
+    "standard": "^10.0.3"
+  },
+  "engines": {
+    "node": ">4"
+  },
   "keywords": [
     "pcm",
     "audio",
@@ -18,30 +39,5 @@
     "oss",
     "pulse",
     "mpg123"
-  ],
-  "license": "MIT",
-  "version": "0.3.1",
-  "author": "Nathan Rajlich <nathan@tootallnate.net> (http://tootallnate.net)",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/TooTallNate/node-speaker.git"
-  },
-  "bugs": {
-    "url": "https://github.com/TooTallNate/node-speaker/issues"
-  },
-  "homepage": "https://github.com/TooTallNate/node-speaker",
-  "main": "./index.js",
-  "scripts": {
-    "build-dev": "node-gyp configure build --verbose",
-    "test": "node-gyp rebuild --mpg123-backend=dummy && mocha --reporter spec"
-  },
-  "dependencies": {
-    "bindings": "^1.2.1",
-    "debug": "^2.2.0",
-    "nan": "^2.2.0",
-    "readable-stream": "^2.0.5"
-  },
-  "devDependencies": {
-    "mocha": "^2.1.0"
-  }
+  ]
 }
