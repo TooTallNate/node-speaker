@@ -36,7 +36,7 @@ describe('Speaker', function () {
       done()
     })
     assert.equal(called, false)
-    s.write(bufferAlloc(0))
+    s.write(bufferAlloc(1024))
   })
 
   it('should emit a "close" event after end()', function (done) {
@@ -48,7 +48,7 @@ describe('Speaker', function () {
       done()
     })
     assert.equal(called, false)
-    s.end(bufferAlloc(0))
+    s.end(bufferAlloc(1024))
   })
 
   it('should only emit one "close" event', function (done) {
