@@ -6,7 +6,6 @@
  * Module dependencies.
  */
 
-const os = require('os')
 const assert = require('assert')
 const bufferAlloc = require('buffer-alloc')
 const Speaker = require('../')
