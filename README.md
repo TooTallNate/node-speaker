@@ -49,10 +49,10 @@ process.stdin.pipe(speaker);
 `require('speaker')` directly returns the `Speaker` constructor. It is the only
 interface exported by `node-speaker`.
 
-### new Speaker([ format ]) -> Speaker instance
+### new Speaker([ options ]) -> Speaker instance
 
 Creates a new `Speaker` instance, which is a writable stream that you can pipe
-PCM audio data to. The optional `format` object may contain any of the `Writable`
+PCM audio data to. The optional `options` object may contain any of the `Writable`
 base class options, as well as any of these PCM formatting options:
 
 * `channels` - The number of audio channels. PCM data must be interleaved. Defaults to `2`.
@@ -61,6 +61,7 @@ base class options, as well as any of these PCM formatting options:
 * `signed` - Boolean specifying if the samples are signed or unsigned. Defaults to `true` when bit depth is 8-bit, `false` otherwise.
 * `float` - Boolean specifying if the samples are floating-point values. Defaults to `false`.
 * `samplesPerFrame` - The number of samples to send to the audio backend at a time. You likely don't need to mess with this value. Defaults to `1024`.
+* `device` - The name of the playback device. E.g. `'hw:0,0'` for first device of first sound card or `'hw:1,0'` for first device of second sound card. Defaults to `null` which will pick the default device.
 
 #### "open" event
 

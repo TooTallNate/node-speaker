@@ -95,6 +95,15 @@ describe('Speaker', function () {
     done()
   })
 
+  it('should accept a device option', function (done) {
+    const s = new Speaker({ device: 'test' })
+
+    assert.equal(s.device, 'test')
+
+    s.on('close', done)
+    s.end(bufferAlloc(0))
+  })
+
   it('should not throw an Error if native "endianness" is specified', function () {
     assert.doesNotThrow(function () {
       // eslint-disable-next-line no-new
