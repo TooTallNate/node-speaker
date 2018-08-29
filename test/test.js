@@ -16,7 +16,7 @@ const opposite = endianness === 'LE' ? 'BE' : 'LE'
 
 describe('exports', function () {
   it('should export a Function', function () {
-    assert.equal('function', typeof Speaker)
+    assert.strict.equal('function', typeof Speaker)
   })
 
   it('should have an "api_version" property', function () {
@@ -43,8 +43,8 @@ describe('Speaker', function () {
 
   it('should be a writable stream', function () {
     const s = new Speaker()
-    assert.equal(s.writable, true)
-    assert.notEqual(s.readable, true)
+    assert.strict.equal(s.writable, true)
+    assert.strict.notEqual(s.readable, true)
   })
 
   it('should emit an "open" event after the first write()', function (done) {
@@ -54,7 +54,7 @@ describe('Speaker', function () {
       called = true
       done()
     })
-    assert.equal(called, false)
+    assert.strict.equal(called, false)
     s.write(bufferAlloc(0))
   })
 
@@ -65,7 +65,7 @@ describe('Speaker', function () {
       called = true
       done()
     })
-    assert.equal(called, false)
+    assert.strict.equal(called, false)
     s.end(bufferAlloc(0))
   })
 
@@ -77,7 +77,7 @@ describe('Speaker', function () {
       called = true
       done()
     })
-    assert.equal(called, false)
+    assert.strict.equal(called, false)
     s.end(bufferAlloc(0))
   })
 
@@ -87,18 +87,18 @@ describe('Speaker', function () {
     s.on('close', function () {
       count++
     })
-    assert.equal(0, count)
+    assert.strict.equal(0, count)
     s.close()
-    assert.equal(1, count)
+    assert.strict.equal(1, count)
     s.close()
-    assert.equal(1, count)
+    assert.strict.equal(1, count)
     done()
   })
 
   it('should accept a device option', function (done) {
     const s = new Speaker({ device: 'test' })
 
-    assert.equal(s.device, 'test')
+    assert.strict.equal(s.device, 'test')
 
     s.on('close', done)
     s.end(bufferAlloc(0))
@@ -124,7 +124,7 @@ describe('Speaker', function () {
       signed: true
     })
     speaker.once('error', (err) => {
-      assert.equal('invalid PCM format specified', err.message)
+      assert.strict.equal('invalid PCM format specified', err.message)
       done()
     })
     speaker.write('a')
