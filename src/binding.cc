@@ -83,7 +83,8 @@ void write_after (uv_work_t *req) {
     Nan::New(wreq->written)
   };
 
-  wreq->callback->Call(1, argv);
+  // wreq->callback->Call(1, argv);
+  Nan::Call(*wreq->callback, 1, argv);
 
   delete wreq->callback;
 }
@@ -110,16 +111,16 @@ NAN_METHOD(Close) {
 
 void Initialize(Handle<Object> target) {
   Nan::HandleScope scope;
-  Nan::ForceSet(target,
+  Nan::DefineOwnProperty(target,
                 Nan::New("api_version").ToLocalChecked(),
                 Nan::New(mpg123_output_module_info.api_version));
-  Nan::ForceSet(target,
+  Nan::DefineOwnProperty(target,
                 Nan::New("name").ToLocalChecked(),
                 Nan::New(mpg123_output_module_info.name).ToLocalChecked());
-  Nan::ForceSet(target,
+  Nan::DefineOwnProperty(target,
                 Nan::New("description").ToLocalChecked(),
                 Nan::New(mpg123_output_module_info.description).ToLocalChecked());
-  Nan::ForceSet(target,
+  Nan::DefineOwnProperty(target,
                 Nan::New("revision").ToLocalChecked(),
                 Nan::New(mpg123_output_module_info.revision).ToLocalChecked());
 
@@ -130,14 +131,14 @@ void Initialize(Handle<Object> target) {
   ao.rate = 44100;
   ao.format = MPG123_ENC_SIGNED_16;
   ao.open(&ao);
-  Nan::ForceSet(target, Nan::New("formats").ToLocalChecked(), Nan::New(ao.get_formats(&ao)));
+  Nan::DefineOwnProperty(target, Nan::New("formats").ToLocalChecked(), Nan::New(ao.get_formats(&ao)));
   ao.close(&ao);
 
   target->Set(Nan::New("sizeof_audio_output_t").ToLocalChecked(),
               Nan::New(static_cast<uint32_t>(sizeof(audio_output_t))));
 
 #define CONST_INT(value) \
-  Nan::ForceSet(target, Nan::New(#value).ToLocalChecked(), Nan::New(value), \
+  Nan::DefineOwnProperty(target, Nan::New(#value).ToLocalChecked(), Nan::New(value), \
       static_cast<PropertyAttribute>(ReadOnly|DontDelete));
 
   CONST_INT(MPG123_ENC_FLOAT_32);
