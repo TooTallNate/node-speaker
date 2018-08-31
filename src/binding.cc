@@ -65,7 +65,7 @@ NAN_METHOD(Write) {
 
   req->req.data = req;
 
-  uv_queue_work(uv_default_loop(), &req->req, write_async, (uv_after_work_cb)write_after);
+  uv_queue_work(Nan::GetCurrentEventLoop(), &req->req, write_async, (uv_after_work_cb)write_after);
 
   info.GetReturnValue().SetUndefined();
 }
