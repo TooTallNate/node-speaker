@@ -1,9 +1,12 @@
 declare module 'speaker' {
-    import { Writable } from 'stream';
+    import { Writable, WritableOptions } from 'stream';
 
-    export interface Options {
+    export interface Options extends WritableOptions {
+        readonly channels?: number;
+        readonly sampleRate?: number;
         readonly lowWaterMark?: number;
         readonly highWaterMark?: number;
+        readonly bitDepth?: number | string;
     }
 
     export interface Format {
@@ -46,7 +49,7 @@ declare module 'speaker' {
          * that was selected during compilation.
          *
          * @param format MPG123_ENC_* format constant
-         * @return true if the format is playable, false otherwise
+         * @return whether or not is playable
          */
         public isSupported(format: number): boolean;
     }
