@@ -5,6 +5,8 @@
   "description": "Output PCM audio data to the speakers",
   "author": "Nathan Rajlich <nathan@tootallnate.net> (http://tootallnate.net)",
   "repository": "TooTallNate/node-speaker",
+  "main": "index.js",
+  "types": "index.d.js",
   "scripts": {
     "test": "standard && node-gyp rebuild --mpg123-backend=dummy && mocha --reporter spec"
   },
@@ -16,6 +18,7 @@
     "readable-stream": "^2.3.3"
   },
   "devDependencies": {
+    "@machinomy/types-readable-stream": "git+https://github.com/machinomy/types-readable-stream.git",
     "mocha": "^3.5.0",
     "standard": "^10.0.3"
   },
