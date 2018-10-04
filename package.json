@@ -6,7 +6,7 @@
   "author": "Nathan Rajlich <nathan@tootallnate.net> (http://tootallnate.net)",
   "repository": "TooTallNate/node-speaker",
   "main": "index.js",
-  "types": "index.d.js",
+  "types": "index.d.ts",
   "scripts": {
     "test": "standard && node-gyp rebuild --mpg123-backend=dummy && mocha --reporter spec"
   },
@@ -18,7 +18,7 @@
     "readable-stream": "^2.3.3"
   },
   "devDependencies": {
-    "@machinomy/types-readable-stream": "git+https://github.com/machinomy/types-readable-stream.git",
+    "@types/node": "^10.11.4",
     "mocha": "^3.5.0",
     "standard": "^10.0.3"
   },
