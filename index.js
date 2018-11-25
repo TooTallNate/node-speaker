@@ -204,8 +204,12 @@ class Speaker extends Writable {
       binding.write(handle, b, b.length, onwrite)
     }
 
+    var THIS = this; //preserve "this" for onwrite call-back
     const onwrite = (r) => {
-      debug('wrote %o bytes', r)
+      debug('wrote %o bytes', r);
+      if (isNaN(++THIS.numwr)) THIS.numwr = 1; //track #writes; is this == #frames?
+      if (isNaN(THIS.wrtotal += r)) THIS.wrtotal = r; //track total data written
+      THIS.emit('progress', {numwr: THIS.numwr, wrlen: r, wrtotal: THIS.wrtotal, buflen: (left || []).length}); //give caller some progress info
       if (r !== b.length) {
         done(new Error(`write() failed: ${r}`))
       } else if (left) {

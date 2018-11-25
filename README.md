@@ -68,6 +68,14 @@ base class options, as well as any of these PCM formatting options:
 Fired when the backend `open()` call has completed. This happens once the first
 `write()` call happens on the speaker instance.
 
+#### "progress" event
+
+Fired after each data write to the speaker instance.  The parameter contains progress info:
+* `numwr` - the cumulative number of writes (this is related to the number of frames)
+* `wrlen` - the number of bytes written this time
+* `wrtotal` - the total number of bytes written
+* `buflen` - the number of bytes currently remaining in the buffer
+
 #### "flush" event
 
 Fired after the speaker instance has had `end()` called, and after the audio data
