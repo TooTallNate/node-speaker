@@ -81,6 +81,10 @@ class Speaker extends Writable {
       debug('setting default %o: %o', 'signed', this.bitDepth !== 8)
       this.signed = this.bitDepth !== 8
     }
+    if (this.device == null) {
+      debug('setting default %o: %o', 'device', null)
+      this.device = null
+    }
 
     const format = Speaker.getFormat(this)
     if (format == null) {
@@ -97,7 +101,7 @@ class Speaker extends Writable {
     // initialize the audio handle
     // TODO: open async?
     this.audio_handle = bufferAlloc(binding.sizeof_audio_output_t)
-    const r = binding.open(this.audio_handle, this.channels, this.sampleRate, format)
+    const r = binding.open(this.audio_handle, this.channels, this.sampleRate, format, this.device)
     if (r !== 0) {
       throw new Error(`open() failed: ${r}`)
     }
@@ -140,6 +144,10 @@ class Speaker extends Writable {
     if (opts.samplesPerFrame != null) {
       debug('setting %o: %o', 'samplesPerFrame', opts.samplesPerFrame)
       this.samplesPerFrame = opts.samplesPerFrame
+    }
+    if (opts.device != null) {
+      debug('setting %o: %o', 'device', opts.device)
+      this.device = opts.device
     }
     if (opts.endianness == null || endianness === opts.endianness) {
       // no "endianness" specified or explicit native endianness
