@@ -204,12 +204,13 @@ class Speaker extends Writable {
       binding.write(handle, b, b.length, onwrite)
     }
 
-    var THIS = this; //preserve "this" for onwrite call-back
+//    var THIS = this; //preserve "this" for onwrite call-back; arrow functions don't have a "this"
     const onwrite = (r) => {
       debug('wrote %o bytes', r);
-      if (isNaN(++THIS.numwr)) THIS.numwr = 1; //track #writes; is this == #frames?
-      if (isNaN(THIS.wrtotal += r)) THIS.wrtotal = r; //track total data written
-      THIS.emit('progress', {numwr: THIS.numwr, wrlen: r, wrtotal: THIS.wrtotal, buflen: (left || []).length}); //give caller some progress info
+//      removed -dj 12/15/18; too much latency (and too unpredictable due to node event loop)
+//      if (isNaN(++THIS.numwr)) THIS.numwr = 1; //track #writes; is this == #frames?
+//      if (isNaN(THIS.wrtotal += r)) THIS.wrtotal = r; //track total data written
+//      THIS.emit('progress', {numwr: THIS.numwr, wrlen: r, wrtotal: THIS.wrtotal, buflen: (left || []).length}); //give caller some progress info
       if (r !== b.length) {
         done(new Error(`write() failed: ${r}`))
       } else if (left) {
@@ -223,6 +224,28 @@ class Speaker extends Writable {
 
     write()
   }
+
+
+  /**
+   * get current playback progress. -dj 12/15/18
+   * Last couple of writes can be used to estimate current playback status.
+   * There will always be latency and hence uncertainty, but try to keep to minimum.
+   * Async event emit would introduce more (variable) latency due to uv event loop,
+   * so just let caller ask for progress data synchronously.
+   *
+   * @api public
+   */
+  progress () {
+    debug('status()')
+//    if (this._closed) return debug('already closed...')
+    if (this._closed) return debug('already closed...')
+    if (!this.audio_handle) return debug('no handle, closed?');
+    debug('invoking progess() native binding')
+    const retval = binding.progess(this.audio_handle);
+    debug('got back %o from progess()', retval)
+    return retval
+  }
+
 
   /**
    * Called when this stream is pipe()d to from another readable stream.
