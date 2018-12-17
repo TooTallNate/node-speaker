@@ -237,12 +237,45 @@ class Speaker extends Writable {
    */
   progress () {
     debug('status()')
-//    if (this._closed) return debug('already closed...')
     if (this._closed) return debug('already closed...')
     if (!this.audio_handle) return debug('no handle, closed?');
     debug('invoking progess() native binding')
     const retval = binding.progess(this.audio_handle);
     debug('got back %o from progess()', retval)
+    return retval
+  }
+
+
+   /**
+   * get current playback volume. -dj 12/15/18
+   * Not sure which value to use (base, actual, rva_db), so get them all.
+   *
+   * @api public
+   */
+  get_vol () {
+    debug('get_vol()')
+    if (this._closed) return debug('already closed...')
+    if (!this.audio_handle) return debug('no handle, closed?');
+    debug('invoking get_vol() native binding')
+    const retval = binding.volume_get(this.audio_handle);
+    debug('got back %o from volume_get()', retval)
+    return retval
+  }
+
+
+   /**
+   * set current playback volume. -dj 12/17/18
+   *
+   * @api public
+   * @param {new_vol} float
+   */
+  set_vol (new_vol) {
+    debug('set_vol() %o new volume', new_vol)
+    if (this._closed) return debug('already closed...')
+    if (!this.audio_handle) return debug('no handle, closed?');
+    debug('invoking set_vol() native binding')
+    const retval = binding.volume_set(this.audio_handle, new_vol);
+    debug('got back %o from volume_set()', retval)
     return retval
   }
 

@@ -148,11 +148,10 @@ void write_after (uv_work_t *req) {
 
 //added method to get playback status -dj 12/15/18
 //caller can call this at precise intervals rather than receiving inprecise emitting async events
+//NOTE: info is based on queued writes, but there will be latency anyway; works okay if consistent/predictable
 NAN_METHOD(Progress) {
   Nan::HandleScope scope;
   audio_output_t *ao = UnwrapPointer<audio_output_t *>(info[0]);
-//return progress info -dj 12/15/18
-//NOTE: info is based on queued writes, but there will be latency anyway; works okay if consistent/predictable
   v8::Local<v8::Object> retval = Nan::New<v8::Object>();
 //  retval->Set(Nan::New("numwr").ToLocalChecked(), info[0]->ToString());
 //  HERE(2);
@@ -174,6 +173,38 @@ NAN_METHOD(Progress) {
   info.GetReturnValue().Set(retval);
   ao->epoch = latest;
 }
+
+
+//TODO: broken: #define WANT_VOLUME
+#ifdef WANT_VOLUME
+//added methods to get/set volume -dj 12/17/18
+//not sure if stream needs to be paused to call this
+//api docs at https://www.mpg123.de/api/group__mpg123__voleq.shtml
+NAN_METHOD(VolumeGet) {
+  Nan::HandleScope scope;
+  audio_output_t *ao = UnwrapPointer<audio_output_t *>(info[0]);
+  double base, really, rva_db;
+  int r = mpg123_get_volume(&ao->original, &base, &really, &rva_db);
+  if (r) { info.GetReturnValue().Set(scope.Escape(Nan::New<v8::Integer>(r))); return; } //error
+  v8::Local<v8::Object> retval = Nan::New<v8::Object>();
+  Nan::ForceSet(retval, Nan::New("base").ToLocalChecked(), Nan::New<v8::Number>(base));
+  Nan::ForceSet(retval, Nan::New("actual").ToLocalChecked(), Nan::New<v8::Number>(really));
+  Nan::ForceSet(retval, Nan::New("rva_db").ToLocalChecked(), Nan::New<v8::Number>(rva_db));
+  info.GetReturnValue().Set(retval);
+}
+NAN_METHOD(VolumeSet) {
+  Nan::HandleScope scope;
+  audio_output_t *ao = UnwrapPointer<audio_output_t *>(info[0]);
+#if 1
+  double vol = info[1]->DoubleValue();
+  int r = mpg123_volume(&ao->original, vol);
+#else
+  double change = info[1]->DoubleValue();
+  int r = mpg123_volume_change(&ao->original, change);
+#endif
+  info.GetReturnValue().Set(r);
+}
+#endif
 
 
 NAN_METHOD(Flush) {
@@ -244,7 +275,12 @@ void Initialize(Handle<Object> target) {
   Nan::SetMethod(target, "write", Write);
   Nan::SetMethod(target, "flush", Flush);
   Nan::SetMethod(target, "close", Close);
-  Nan::SetMethod(target, "progess", Progress); //added -dj 12/15/18
+//-dj 12/15/18 added:
+  Nan::SetMethod(target, "progess", Progress);
+#ifdef WANT_VOLUME
+  Nan::SetMethod(target, "volume_get", VolumeGet);
+  Nan::SetMethod(target, "volume_set", VolumeSet);
+#endif
 }
 
 } // anonymous namespace
