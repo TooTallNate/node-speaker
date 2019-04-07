@@ -1,20 +1,22 @@
 import { Writable, WritableOptions } from 'stream';
 
-export interface Options extends WritableOptions {
-    readonly channels?: number;
-    readonly bitDepth?: number;
-    readonly sampleRate?: number;
-    readonly lowWaterMark?: number;
-    readonly highWaterMark?: number;
-}
+namespace Speaker {
+    interface Options extends WritableOptions {
+        readonly channels?: number;
+        readonly bitDepth?: number;
+        readonly sampleRate?: number;
+        readonly lowWaterMark?: number;
+        readonly highWaterMark?: number;
+    }
 
-export interface Format {
-    readonly float?: boolean;
-    readonly signed?: boolean;
-    readonly bitDepth?: number;
-    readonly channels?: number;
-    readonly sampleRate?: number;
-    readonly samplesPerFrame?: number;
+    interface Format {
+        readonly float?: boolean;
+        readonly signed?: boolean;
+        readonly bitDepth?: number;
+        readonly channels?: number;
+        readonly sampleRate?: number;
+        readonly samplesPerFrame?: number;
+    }
 }
 
 /**
@@ -23,8 +25,8 @@ export interface Format {
  *
  * @param opts options.
  */
-export default class Speaker extends Writable {
-    constructor(opts?: Options);
+class Speaker extends Writable {
+    constructor(opts?: Speaker.Options);
 
     /**
      * Closes the audio backend. Normally this function will be called automatically
@@ -42,7 +44,7 @@ export default class Speaker extends Writable {
      * @param format format object with `channels`, `sampleRate`, `bitDepth`, etc.
      * @return MPG123_ENC_* constant, or `null`
      */
-    public getFormat(format: Format): number | null;
+    public getFormat(format: Speaker.Format): number | null;
 
     /**
      * Returns whether or not "format" is playable via the "output module"
@@ -53,3 +55,5 @@ export default class Speaker extends Writable {
      */
     public isSupported(format: number): boolean;
 }
+
+exports = Speaker
