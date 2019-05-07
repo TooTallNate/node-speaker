@@ -108,7 +108,11 @@ NAN_METHOD(Close) {
   info.GetReturnValue().Set(scope.Escape(Nan::New<v8::Integer>(r)));
 }
 
-void Initialize(Handle<Object> target) {
+/*
+<<in 2014, the V8 team deprecated v8::Handle in favor of v8::Local>>
+src: https://electronjs.org/blog/nodejs-native-addons-and-electron-5
+*/
+void Initialize(Local<Object> target) {
   Nan::HandleScope scope;
   Nan::ForceSet(target,
                 Nan::New("api_version").ToLocalChecked(),
