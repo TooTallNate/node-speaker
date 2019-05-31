@@ -14,7 +14,7 @@
     "bindings": "^1.3.0",
     "buffer-alloc": "^1.1.0",
     "debug": "^3.0.1",
-    "nan": "^2.6.2",
+    "nan": "^2.14.0",
     "readable-stream": "^2.3.3"
   },
   "devDependencies": {

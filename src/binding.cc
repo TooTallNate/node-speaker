@@ -27,14 +27,14 @@ NAN_METHOD(Open) {
   audio_output_t *ao = UnwrapPointer<audio_output_t *>(info[0]);
   memset(ao, 0, sizeof(audio_output_t));
 
-  ao->channels = info[1]->Int32Value(); /* channels */
-  ao->rate = info[2]->Int32Value(); /* sample rate */
-  ao->format = info[3]->Int32Value(); /* MPG123_ENC_* format */
+  ao->channels = info[1]->Int32Value(Nan::GetCurrentContext()).FromJust(); /* channels */
+  ao->rate = info[2]->Int32Value(Nan::GetCurrentContext()).FromJust(); /* sample rate */
+  ao->format = info[3]->Int32Value(Nan::GetCurrentContext()).FromJust(); /* MPG123_ENC_* format */
 
   if (info[4]->IsString()) {
-    v8::Local<v8::String> deviceString = info[4]->ToString();
+    v8::Local<v8::String> deviceString = info[4]->ToString(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>());
     ao->device = new char[deviceString->Length() + 1];
-    deviceString->WriteOneByte(reinterpret_cast<uint8_t *>(ao->device));
+    deviceString->WriteOneByte(v8::Isolate::GetCurrent(), reinterpret_cast<uint8_t *>(ao->device));
   }
 
   /* init_output() */
@@ -54,7 +54,7 @@ NAN_METHOD(Write) {
   Nan::HandleScope scope;
   audio_output_t *ao = UnwrapPointer<audio_output_t *>(info[0]);
   unsigned char *buffer = UnwrapPointer<unsigned char *>(info[1]);
-  int len = info[2]->Int32Value();
+  int len = info[2]->Int32Value(Nan::GetCurrentContext()).FromJust();
 
   write_req *req = new write_req;
   req->ao = ao;
