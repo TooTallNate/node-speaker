@@ -4,3 +4,6 @@
 # dev files
 /?.js
 /*.mp3
+
+# editors
+.vscode
