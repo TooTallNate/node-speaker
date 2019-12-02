@@ -7,7 +7,6 @@
 const os = require('os')
 const debug = require('debug')('speaker')
 const binding = require('bindings')('binding')
-const bufferAlloc = require('buffer-alloc')
 const Writable = require('readable-stream/writable')
 
 // determine the native host endianness, the only supported playback endianness
@@ -100,11 +99,7 @@ class Speaker extends Writable {
 
     // initialize the audio handle
     // TODO: open async?
-    this.audio_handle = bufferAlloc(binding.sizeof_audio_output_t)
-    const r = binding.open(this.audio_handle, this.channels, this.sampleRate, format, this.device)
-    if (r !== 0) {
-      throw new Error(`open() failed: ${r}`)
-    }
+    this.audio_handle = binding.open(this.channels, this.sampleRate, format, this.device)
 
     this.emit('open')
     return this.audio_handle
@@ -201,7 +196,11 @@ class Speaker extends Writable {
         left = null
       }
       debug('writing %o byte chunk', b.length)
-      binding.write(handle, b, b.length, onwrite)
+      binding.write(handle, b).then(onwrite, onerror)
+    }
+
+    const onerror = (e) => {
+      this.emit('error', e)
     }
 
     const onwrite = (r) => {
