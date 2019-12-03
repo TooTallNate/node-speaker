@@ -199,10 +199,6 @@ static napi_value Init(napi_env env, napi_value exports) {
   assert(napi_create_int32(env, get_formats(), &formats) == napi_ok);
   assert(napi_set_named_property(env, result, "formats", formats) == napi_ok);
 
-  napi_value sizeof_audio_output_t;
-  assert(napi_create_uint32(env, sizeof(audio_output_t), &sizeof_audio_output_t) == napi_ok);
-  assert(napi_set_named_property(env, result, "sizeof_audio_output_t", sizeof_audio_output_t) == napi_ok);
-
 #define CONST_INT(NAME) \
   napi_value NAME ## _value;\
   assert(napi_create_uint32(env, NAME, & NAME ## _value) == napi_ok);\
