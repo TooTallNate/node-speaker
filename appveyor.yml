@@ -2,15 +2,15 @@
 
 # Test against these versions of Node.js.
 environment:
-  # Visual Studio Version
-  MSVS_VERSION: 2013
-  # Test against these versions of Node.js and io.js
   matrix:
-    # node.js
-    - nodejs_version: "4"
-    - nodejs_version: "6"
-    - nodejs_version: "7"
-    - nodejs_version: "8"
+    - nodejs_version: '12'
+      MSVS_VERSION: 2015
+    - nodejs_version: '10'
+      MSVS_VERSION: 2015
+    - nodejs_version: '8'
+      MSVS_VERSION: 2013
+    - nodejs_version: '8.6.0'
+      MSVS_VERSION: 2013
 
 platform:
   - x86
