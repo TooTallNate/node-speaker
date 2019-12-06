@@ -7,7 +7,7 @@
 const os = require('os')
 const debug = require('debug')('speaker')
 const binding = require('bindings')('binding')
-const Writable = require('readable-stream/writable')
+const { Writable } = require('stream')
 
 // determine the native host endianness, the only supported playback endianness
 const endianness = os.endianness()
