@@ -16,6 +16,10 @@ jobs:
     steps:
     - uses: actions/checkout@v1
 
+    - name: Install libasound2-dev
+      run: sudo apt-get install -y libasound2-dev
+      if: matrix.os == 'ubuntu-latest'
+
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
