@@ -8,7 +8,6 @@
 
 const os = require('os')
 const assert = require('assert')
-const bufferAlloc = require('buffer-alloc')
 const Speaker = require('../')
 
 const endianness = os.endianness()
@@ -55,7 +54,7 @@ describe('Speaker', function () {
       done()
     })
     assert.strictEqual(called, false)
-    s.write(bufferAlloc(0))
+    s.write(Buffer.alloc(0))
   })
 
   it('should emit a "flush" event after end()', function (done) {
@@ -66,7 +65,7 @@ describe('Speaker', function () {
       done()
     })
     assert.strictEqual(called, false)
-    s.end(bufferAlloc(0))
+    s.end(Buffer.alloc(0))
   })
 
   it('should emit a "close" event after end()', function (done) {
@@ -78,7 +77,7 @@ describe('Speaker', function () {
       done()
     })
     assert.strictEqual(called, false)
-    s.end(bufferAlloc(0))
+    s.end(Buffer.alloc(0))
   })
 
   it('should only emit one "close" event', function (done) {
@@ -101,7 +100,7 @@ describe('Speaker', function () {
     assert.strictEqual(s.device, 'test')
 
     s.on('close', done)
-    s.end(bufferAlloc(0))
+    s.end(Buffer.alloc(0))
   })
 
   it('should not throw an Error if native "endianness" is specified', function () {
