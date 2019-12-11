@@ -2,8 +2,7 @@
 
 ## Output [PCM audio][pcm] data to the speakers
 
-[![Build Status](https://secure.travis-ci.org/TooTallNate/node-speaker.svg)](https://travis-ci.org/TooTallNate/node-speaker)
-[![Build Status](https://ci.appveyor.com/api/projects/status/wix7wml3v55670kw?svg=true)](https://ci.appveyor.com/project/TooTallNate/node-speaker)
+[![Build Status](https://github.com/TooTallNate/node-speaker/workflows/Node%20CI/badge.svg)](https://github.com/TooTallNate/node-speaker/actions?workflow=Node+CI)
 
 A Writable stream instance that accepts [PCM audio][pcm] data and outputs it
 to the speakers. The output is backed by `mpg123`'s audio output modules, which
