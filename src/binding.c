@@ -11,6 +11,11 @@
 extern mpg123_module_t mpg123_output_module_info;
 
 typedef struct {
+  char *device;
+  audio_output_t ao;
+} Speaker;
+
+typedef struct {
   audio_output_t *ao;
 
   size_t length;
@@ -36,8 +41,9 @@ napi_value speaker_open(napi_env env, napi_callback_info info) {
   napi_value args[4];
   assert(napi_get_cb_info(env, info, &argc, args, NULL, NULL) == napi_ok);
 
-  audio_output_t *ao = malloc(sizeof(audio_output_t));
-  memset(ao, 0, sizeof(audio_output_t));
+  Speaker *speaker = malloc(sizeof(Speaker));
+  memset(speaker, 0, sizeof(Speaker));
+  audio_output_t *ao = &speaker->ao;
 
   assert(napi_get_value_int32(env, args[0], &ao->channels) == napi_ok); /* channels */
   int32_t _rate;
@@ -48,9 +54,10 @@ napi_value speaker_open(napi_env env, napi_callback_info info) {
   if (is_string(env, args[3])) {
     size_t device_string_size;
     assert(napi_get_value_string_utf8(env, args[3], NULL, 0, &device_string_size) == napi_ok);
-    ao->device = malloc(++device_string_size);
-    assert(napi_get_value_string_utf8(env, args[3], ao->device, device_string_size, NULL) == napi_ok);
-    assert(ao->device[device_string_size - 1] == 0);
+    speaker->device = malloc(++device_string_size);
+    assert(napi_get_value_string_utf8(env, args[3], speaker->device, device_string_size, NULL) == napi_ok);
+    assert(speaker->device[device_string_size - 1] == 0);
+    ao->device = speaker->device;
   }
 
   /* init_output() */
@@ -71,7 +78,7 @@ napi_value speaker_open(napi_env env, napi_callback_info info) {
 
   napi_value handle;
   assert(napi_create_object(env, &handle) == napi_ok);
-  assert(napi_wrap(env, handle, ao, finalize, NULL, NULL) == napi_ok);
+  assert(napi_wrap(env, handle, speaker, finalize, NULL, NULL) == napi_ok);
 
   return handle;
 }
@@ -97,8 +104,11 @@ napi_value speaker_write(napi_env env, napi_callback_info info) {
   napi_value args[2];
   assert(napi_get_cb_info(env, info, &argc, args, NULL, NULL) == napi_ok);
 
+  Speaker *speaker;
+  assert(napi_unwrap(env, args[0], (void**) &speaker) == napi_ok);
+
   WriteData* data = malloc(sizeof(WriteData));
-  assert(napi_unwrap(env, args[0], (void**) &data->ao) == napi_ok);
+  data->ao = &speaker->ao;
   data->written = 0;
   assert(napi_get_typedarray_info(env, args[1], NULL, &data->length, (void **) &data->buffer, NULL, NULL) == napi_ok);
 
@@ -121,8 +131,9 @@ napi_value speaker_flush(napi_env env, napi_callback_info info) {
   napi_value args[1];
   assert(napi_get_cb_info(env, info, &argc, args, NULL, NULL) == napi_ok);
 
-  audio_output_t *ao;
-  assert(napi_unwrap(env, args[0], (void**) &ao) == napi_ok);
+  Speaker *speaker;
+  assert(napi_unwrap(env, args[0], (void**) &speaker) == napi_ok);
+  audio_output_t *ao = &speaker->ao;
 
   /* TODO: async */
   ao->flush(ao);
@@ -134,8 +145,9 @@ napi_value speaker_close(napi_env env, napi_callback_info info) {
   napi_value args[1];
   assert(napi_get_cb_info(env, info, &argc, args, NULL, NULL) == napi_ok);
 
-  audio_output_t *ao;
-  assert(napi_unwrap(env, args[0], (void**) &ao) == napi_ok);
+  Speaker *speaker;
+  assert(napi_unwrap(env, args[0], (void**) &speaker) == napi_ok);
+  audio_output_t *ao = &speaker->ao;
 
   int r = ao->close(ao);
 
@@ -154,7 +166,7 @@ napi_value speaker_close(napi_env env, napi_callback_info info) {
   }
 
 cleanup:
-  free(ao->device);
+  free(speaker->device);
   return NULL;
 }
 
