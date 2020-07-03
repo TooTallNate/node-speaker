@@ -1,6 +1,6 @@
 {
   "name": "speaker",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "license": "MIT",
   "description": "Output PCM audio data to the speakers",
   "author": "Nathan Rajlich <nathan@tootallnate.net> (http://tootallnate.net)",
