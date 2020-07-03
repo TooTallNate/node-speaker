@@ -56,4 +56,4 @@ class Speaker extends Writable {
     public isSupported(format: number): boolean;
 }
 
-exports = Speaker
+export = Speaker
