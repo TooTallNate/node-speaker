@@ -1,6 +1,6 @@
 import { Writable, WritableOptions } from 'stream';
 
-namespace Speaker {
+export namespace Speaker {
     interface Options extends WritableOptions {
         readonly channels?: number;
         readonly bitDepth?: number;
@@ -25,7 +25,7 @@ namespace Speaker {
  *
  * @param opts options.
  */
-class Speaker extends Writable {
+export default class Speaker extends Writable {
     constructor(opts?: Speaker.Options);
 
     /**
@@ -55,5 +55,3 @@ class Speaker extends Writable {
      */
     public isSupported(format: number): boolean;
 }
-
-export = Speaker
