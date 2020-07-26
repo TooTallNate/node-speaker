@@ -1,6 +1,6 @@
 import { Writable, WritableOptions } from 'stream';
 
-export namespace Speaker {
+declare namespace Speaker {
     interface Options extends WritableOptions {
         readonly channels?: number;
         readonly bitDepth?: number;
