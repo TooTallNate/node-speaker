@@ -1,12 +1,13 @@
 import { Writable, WritableOptions } from 'stream';
 
-namespace Speaker {
+declare namespace Speaker {
     interface Options extends WritableOptions {
         readonly channels?: number;
         readonly bitDepth?: number;
         readonly sampleRate?: number;
         readonly lowWaterMark?: number;
         readonly highWaterMark?: number;
+        readonly device?: string;
     }
 
     interface Format {
@@ -25,8 +26,8 @@ namespace Speaker {
  *
  * @param opts options.
  */
-class Speaker extends Writable {
-    constructor(opts?: Speaker.Options);
+export default class Speaker extends Writable {
+    constructor (opts?: Speaker.Options);
 
     /**
      * Closes the audio backend. Normally this function will be called automatically
@@ -55,5 +56,3 @@ class Speaker extends Writable {
      */
     public isSupported(format: number): boolean;
 }
-
-export = Speaker
