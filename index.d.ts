@@ -8,6 +8,9 @@ declare namespace Speaker {
         readonly lowWaterMark?: number;
         readonly highWaterMark?: number;
         readonly device?: string;
+        readonly samplesPerFrame?: number;
+        readonly float?: boolean;
+        readonly signed?: boolean;
     }
 
     interface Format {
