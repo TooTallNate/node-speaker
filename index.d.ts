@@ -35,7 +35,7 @@ class Speaker extends Writable {
      *
      * @param flush Defaults to `true`.
      */
-    public close(flush: boolean): string;
+    public close(flush?: boolean): string;
 
     /**
      * Returns the `MPG123_ENC_*` constant that corresponds to the given "format"
