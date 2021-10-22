@@ -14,35 +14,23 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
 
     - name: Install libasound2-dev
       run: sudo apt-get install -y libasound2-dev
       if: matrix.os == 'ubuntu-latest'
 
-    - name: Setup MSBuild.exe
-      uses: warrenbuckley/Setup-MSBuild@v1
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1
       if: matrix.os == 'windows-latest'
 
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
 
-    - name: Print Node.js Version
-      run: node --version
-
     - name: Install Dependencies
       run: npm install
-      env:
-        CI: true
-
-    - name: Run "build" step
-      run: npm run build --if-present
-      env:
-        CI: true
 
     - name: Run tests
       run: npm test
-      env:
-        CI: true
