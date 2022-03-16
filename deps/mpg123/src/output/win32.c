@@ -58,7 +58,22 @@ static int open_win32(struct audio_output_struct *ao)
 
     /* FIXME: real device enumeration by capabilities? */
     dev_id = WAVE_MAPPER;    /* probably does the same thing */
-    ao->device = "WaveMapper";
+    if (ao->device) {
+        /* Find device id of device with the same name as ao->device */
+        /* Device names from waveOutGetDevCaps are limited to 32  */ 
+        /* characters, so truncate ao->device for comparison */ 
+        ao->device[31] = '\0';
+        for (UINT i = 0; i < waveOutGetNumDevs(); ++i) {
+            WAVEOUTCAPS caps;
+            waveOutGetDevCaps(i, &caps, sizeof(WAVEOUTCAPS));
+            if (!strcmp(ao->device, caps.szPname)) {
+                dev_id = i;
+                break;
+            }
+        }
+    } else {
+        ao->device = "WaveMapper";
+    }
     /* FIXME: support for smth besides MPG123_ENC_SIGNED_16? */
     out_fmt.wFormatTag = WAVE_FORMAT_PCM;
     out_fmt.wBitsPerSample = 16;
