@@ -6,7 +6,7 @@
 
 const os = require('os')
 const debug = require('debug')('speaker')
-const binding = require('bindings')('binding')
+const binding = require('node-gyp-build')(__dirname)
 const { Writable } = require('stream')
 
 // determine the native host endianness, the only supported playback endianness
