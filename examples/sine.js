@@ -5,8 +5,8 @@
  * https://web.archive.org/web/20110816002016/http://blogs.msdn.com/b/dawate/archive/2009/06/24/intro-to-audio-programming-part-3-synthesizing-simple-wave-audio-using-c.aspx
  */
 
-const Readable = require('stream').Readable
-const bufferAlloc = require('buffer-alloc')
+const { Readable } = require('stream')
+const { Buffer } = require('buffer')
 const Speaker = require('../')
 
 // the frequency to play
@@ -33,7 +33,7 @@ function read (n) {
   const sampleSize = this.bitDepth / 8
   const blockAlign = sampleSize * this.channels
   const numSamples = n / blockAlign | 0
-  const buf = bufferAlloc(numSamples * blockAlign)
+  const buf = Buffer.alloc(numSamples * blockAlign)
   const amplitude = 32760 // Max amplitude for 16-bit audio
 
   // the "angle" used in the function, adjusted for the number of

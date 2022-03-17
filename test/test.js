@@ -72,7 +72,7 @@ describe('Speaker', function () {
     this.slow(1000)
     const s = new Speaker()
     let called = false
-    s.on('close', function () {
+    s.once('close', function () {
       called = true
       done()
     })
@@ -96,10 +96,9 @@ describe('Speaker', function () {
 
   it('should accept a device option', function (done) {
     const s = new Speaker({ device: 'test' })
-
     assert.strictEqual(s.device, 'test')
 
-    s.on('close', done)
+    s.once('close', done)
     s.end(Buffer.alloc(0))
   })
 
