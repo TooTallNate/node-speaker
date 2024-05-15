@@ -60,6 +60,8 @@
           { 'conditions': [
             ['target_arch=="arm64"', { 'mpg123_cpu%': 'arm_nofpu' }],
             ['target_arch=="arm"', { 'mpg123_cpu%': 'arm_nofpu' }],
+	    # TODO: use a better arm64 config (needs mpg123 upgrade)
+            ['target_arch=="arm64"', { 'mpg123_cpu%': 'arm_nofpu' }],
             ['target_arch=="ia32"', { 'mpg123_cpu%': 'i386_fpu' }],
             ['target_arch=="x64"', { 'mpg123_cpu%': 'x86-64' }],
           ]}],

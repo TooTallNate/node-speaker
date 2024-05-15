@@ -169,7 +169,6 @@ class Speaker extends Writable {
       // close() has already been called. this should not be called
       return done(new Error('write() call after close() call'))
     }
-    let b
     let left = chunk
     let handle = this.audio_handle
     if (!handle) {
@@ -187,13 +186,12 @@ class Speaker extends Writable {
         debug('aborting remainder of write() call (%o bytes), since speaker is `_closed`', left.length)
         return done()
       }
-      b = left
+      let b = left
+      if (b.length === 0) {
+        return done()
+      }
       if (b.length > chunkSize) {
-        const t = b
-        b = t.slice(0, chunkSize)
-        left = t.slice(chunkSize)
-      } else {
-        left = null
+        b = b.slice(0, chunkSize)
       }
       debug('writing %o byte chunk', b.length)
       binding.write(handle, b).then(onwrite, onerror)
@@ -205,9 +203,10 @@ class Speaker extends Writable {
 
     const onwrite = (r) => {
       debug('wrote %o bytes', r)
-      if (r !== b.length) {
+      if (r <= 0) {
         done(new Error(`write() failed: ${r}`))
-      } else if (left) {
+      } else if (r < left.length) {
+        left = left.slice(r)
         debug('still %o bytes left in this chunk', left.length)
         write()
       } else {
